@@ -22,6 +22,9 @@
 #include "ns3/network-module.h"
 #include "ns3/ndnSIM-module.h"
 
+//ZhangYu 2013-8-16  for ndn::CsTracer
+#include <ns3/ndnSIM/utils/tracers/ndn-cs-tracer.h>
+
 using namespace ns3;
 
 /**
@@ -58,7 +61,7 @@ main (int argc, char *argv[])
   ndn::StackHelper ndnHelper;
   ndnHelper.SetForwardingStrategy ("ns3::ndn::fw::BestRoute");
   ndnHelper.SetContentStore ("ns3::ndn::cs::Lru",
-                              "MaxSize", "1");
+                              "MaxSize", "10");
   ndnHelper.InstallAll ();
 
   // Installing global routing interface on all nodes
@@ -104,6 +107,11 @@ main (int argc, char *argv[])
   ndn::GlobalRoutingHelper::CalculateRoutes ();
 
   Simulator::Stop (Seconds (2));
+
+  //ZhangYu Add the trace
+
+  boost::tuple< boost::shared_ptr<std::ostream>, std::list<Ptr<ndn::CsTracer> > >
+    aggTracers = ndn::CsTracer::InstallAll ("cs-trace.txt", Seconds (1));
 
   Simulator::Run ();
   Simulator::Destroy ();

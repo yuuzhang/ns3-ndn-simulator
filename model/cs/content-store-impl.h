@@ -43,6 +43,13 @@ class EntryImpl : public Entry
 public:
   typedef Entry base_type;
 
+/* In principle, a derived class inherits every member of a base class except:
+  its constructor and its destructor
+  its operator=() members
+  its friends
+  在子类的构造函数后，加一个冒号（:），然后加上父类的带参数的构造函数。这样，在子类的构造函数被调用时，系统就会去调用父类的带参数的构造函数去构造对象。
+*/
+
 public:
   EntryImpl (Ptr<ContentStore> cs, Ptr<const ContentObject> header, Ptr<const Packet> packet)
     : Entry (cs, header, packet)
@@ -160,6 +167,7 @@ boost::tuple<Ptr<Packet>, Ptr<const ContentObject>, Ptr<const Packet> >
 ContentStoreImpl<Policy>::Lookup (Ptr<const Interest> interest)
 {
   NS_LOG_FUNCTION (this << interest->GetName ());
+  NS_LOG_FUNCTION ("ZhangYu 2013-8-13" );
 
   /// @todo Change to search with predicate
   typename super::const_iterator node = this->deepest_prefix_match (interest->GetName ());
@@ -168,26 +176,33 @@ ContentStoreImpl<Policy>::Lookup (Ptr<const Interest> interest)
     {
       this->m_cacheHitsTrace (interest, node->payload ()->GetHeader ());
 
-      // NS_LOG_DEBUG ("cache hit with " << node->payload ()->GetHeader ()->GetName ());
+      //NS_LOG_DEBUG ("cache hit with " << node->payload ()->GetHeader ()->GetName ());
+      NS_LOG_DEBUG ("ZhangYu2013-8-13 cache hit with =========================================================" << node->payload ()->GetHeader ()->GetName ());
       return boost::make_tuple (node->payload ()->GetFullyFormedNdnPacket (),
                                 node->payload ()->GetHeader (),
                                 node->payload ()->GetPacket ());
     }
   else
     {
-      // NS_LOG_DEBUG ("cache miss for " << interest->GetName ());
+      //NS_LOG_DEBUG ("cache miss for " << interest->GetName ());
+      NS_LOG_DEBUG ("ZhangYu2013-8-13 cache miss for " << interest->GetName ());
       this->m_cacheMissesTrace (interest);
       return boost::tuple<Ptr<Packet>, Ptr<ContentObject>, Ptr<Packet> > (0, 0, 0);
     }
 }
 
 template<class Policy>
+/* 下面的<Policy>是在使用函数模板时，需要用<Policy>来表明函数中用到的具体数据类型，参见 http://www.cplusplus.com/doc/tutorial/templates/
+ * 但是这里还是模板，估计只是因为是要定义函数Add时，需要有这个Policy
+ */
 bool
 ContentStoreImpl<Policy>::Add (Ptr<const ContentObject> header, Ptr<const Packet> packet)
 {
   NS_LOG_FUNCTION (this << header->GetName ());
+  std::cout << "ZhangYu2013-8-4---------------------Add   " <<this->GetTypeId() << "   " << header->GetName() << std::endl;
 
   Ptr< entry > newEntry = Create< entry > (this, header, packet);
+
   std::pair< typename super::iterator, bool > result = super::insert (header->GetName (), newEntry);
 
   if (result.first != super::end ())

@@ -55,7 +55,9 @@ main (int argc, char *argv[])
   cmd.Parse (argc, argv);
 
   AnnotatedTopologyReader topologyReader ("", 25);
-  topologyReader.SetFileName ("src/ndnSIM/examples/topologies/topo-grid-3x3.txt");
+  //topologyReader.SetFileName ("src/ndnSIM/examples/topologies/topo-for-DijkstraExample.txt");
+  //topologyReader.SetFileName("src/ndnSIM/examples/topologies/topo-for-DijkstraTest4Nodes.txt");
+  topologyReader.SetFileName("src/ndnSIM/examples/topologies/topo-grid-3x3.txt");
   topologyReader.Read ();
   topologyReader.ApplyOspfMetric();
 
@@ -70,7 +72,7 @@ main (int argc, char *argv[])
   ndnGlobalRoutingHelper.InstallAll ();
 
   // Getting containers for the consumer/producer
-  Ptr<Node> producer = Names::Find<Node> ("Node8");
+  Ptr<Node> producer = Names::Find<Node> ("Node4");
   NodeContainer consumerNodes;
   consumerNodes.Add (Names::Find<Node> ("Node0"));
 
@@ -92,6 +94,7 @@ main (int argc, char *argv[])
 
   // Calculate and install FIBs
   ndn::GlobalRoutingHelper::CalculateRoutes ();
+  //ndn::GlobalRoutingHelper::CalculateAllPossibleRoutes();
 
   Simulator::Stop (Seconds (20.0));
 

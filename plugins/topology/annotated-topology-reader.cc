@@ -213,7 +213,7 @@ AnnotatedTopologyReader::Read (void)
       string from, to, capacity, metric, delay, maxPackets, lossRate;
 
       lineBuffer >> from >> to >> capacity >> metric >> delay >> maxPackets >> lossRate;
-      NS_LOG_DEBUG("ZhangYu 2013-5-7 metric before AddLink: " << metric);
+      //NS_LOG_DEBUG("ZhangYu 2013-5-7 metric before AddLink: " << metric);
 
       if (processedLinks[to].size () != 0 &&
           processedLinks[to].find (from) != processedLinks[to].end ())

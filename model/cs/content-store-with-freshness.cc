@@ -41,6 +41,7 @@ using namespace ndnSIM;
 
 namespace cs {
 
+
 // explicit instantiation and registering
 /**
  * @brief ContentStore with freshness and LRU cache replacement policy
@@ -73,7 +74,7 @@ NS_OBJECT_ENSURE_REGISTERED_TEMPL(ContentStoreWithFreshness, lfu_policy_traits);
 // /**
 //  * \brief Content Store with freshness implementing LRU cache replacement policy
 //  */
-class Freshness::Lru : public ContentStoreWithFreshness<lru_policy_traits> { };
+class Freshness::Lru : public ContentStoreWithFreshness<lru_policy_traits> {};
 
 /**
  * \brief Content Store with freshness implementing FIFO cache replacement policy

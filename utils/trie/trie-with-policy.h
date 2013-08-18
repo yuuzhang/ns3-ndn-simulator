@@ -31,8 +31,10 @@ template<typename FullKey,
          typename PayloadTraits,
          typename PolicyTraits
          >
+
 class trie_with_policy
 {
+
 public:
   typedef trie< FullKey,
                 PayloadTraits,

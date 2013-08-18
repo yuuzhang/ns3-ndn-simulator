@@ -26,7 +26,9 @@
 #include "../../utils/trie/multi-policy.h"
 #include "custom-policies/freshness-policy.h"
 
+
 namespace ns3 {
+
 namespace ndn {
 namespace cs {
 
@@ -83,6 +85,10 @@ ContentStoreWithFreshness< Policy >::GetTypeId ()
 
     // trace stuff here
     ;
+  NS_LOG_DEBUG("ZhangYu2013-7-17 << Cleaning: Total number of items:" << std::endl);
+  NS_LOG_DEBUG("ZhangYu2013-7-17----------------------------------------------" <<std::endl);
+  //std::cout << "ZhangYu2013-7-17------cout---------------------" <<std::endl;
+  NS_LOG_DEBUG("ZhangYu2013-7-18-------------------------------" <<std::endl);
 
   return tid;
 }
@@ -92,6 +98,8 @@ template<class Policy>
 inline bool
 ContentStoreWithFreshness< Policy >::Add (Ptr<const ContentObject> header, Ptr<const Packet> packet)
 {
+	//NS_LOG_DEBUG("ZhangYu2013-7-18--------Add-----------" <<std::endl);
+	//std::cout << "ZhangYu2013-7-19-------Add" << std::endl;
   bool ok = super::Add (header, packet);
   if (!ok) return false;
 
@@ -138,6 +146,8 @@ inline void
 ContentStoreWithFreshness< Policy >::CleanExpired ()
 {
   freshness_policy_container &freshness = this->getPolicy ().template get<freshness_policy_container> ();
+	std::cout << "ZhangYu2013-7-19-------CleanExpired" << std::endl;
+
 
   // NS_LOG_LOGIC (">> Cleaning: Total number of items:" << this->getPolicy ().size () << ", items with freshness: " << freshness.size ());
   Time now = Simulator::Now ();

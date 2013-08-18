@@ -25,6 +25,7 @@
 #include <boost/intrusive/list.hpp>
 
 namespace ns3 {
+
 namespace ndn {
 namespace ndnSIM {
 
@@ -68,6 +69,13 @@ struct lru_policy_traits
       inline void
       update (typename parent_trie::iterator item)
       {
+    	  /*lru和fifo的区别就在这里，splice函数参看 http://www.boost.org/doc/libs/1_51_0/doc/html/boost/intrusive/list.html#id1199565-bb
+    	   * void splice(const_iterator p, list & x, const_iterator new_ele);
+    	   *Requires: p must be a valid iterator of *this. new_ele must point to an element contained in list x.
+    	   *Effects: Transfers the value pointed by new_ele, from list x to this list, before the the element pointed by p.
+    	   *No destructors or copy constructors are called. If p == new_ele or p == ++new_ele, this function is a null operation.
+    	   */
+  		std::cout << "ZhangYu2013-8-9-------------------------------------update" << std::endl;
         // do relocation
         policy_container::splice (policy_container::end (),
                                   *this,
@@ -77,6 +85,8 @@ struct lru_policy_traits
       inline bool
       insert (typename parent_trie::iterator item)
       {
+		std::cout << "ZhangYu2013-8-9-------------------------------------insert" << std::endl;
+
         if (max_size_ != 0 && policy_container::size () >= max_size_)
           {
             base_.erase (&(*policy_container::begin ()));
@@ -89,6 +99,7 @@ struct lru_policy_traits
       inline void
       lookup (typename parent_trie::iterator item)
       {
+		std::cout << "ZhangYu2013-8-9-------------------------------------lookup" << std::endl;
         // do relocation
         policy_container::splice (policy_container::end (),
                                   *this,
@@ -98,6 +109,7 @@ struct lru_policy_traits
       inline void
       erase (typename parent_trie::iterator item)
       {
+		std::cout << "ZhangYu2013-8-9-------------------------------------erase" << std::endl;
         policy_container::erase (policy_container::s_iterator_to (*item));
       }
 
