@@ -251,6 +251,7 @@ struct WeightCombine :
   uint32_t
   operator () (uint32_t a, property_traits< EdgeWeights >::reference b) const
   {
+	//b.get<1>()=20;
     return a + b.get<1> ();
   }
 
@@ -258,8 +259,17 @@ struct WeightCombine :
   operator () (tuple< ns3::Ptr<ns3::ndn::Face>, uint32_t, double > a,
                property_traits< EdgeWeights >::reference b) const
   {
+	/*b已经是<face,uint,double>的元组了，这里只是告诉使用这样的距离计算方法。b的产生实在本文件下面的的get(weightmap,edge)的定义中
+	 * get(weightmap,edge）是在dijkstra_shortest_path中调用了 relax， relax中有 const W& w_e = get(w, e);所以除非修改get(w,e)
+	 * 否则任何在dijkstra外部的对b的修改是无效的。
+	 * 2013-5-15
+	 */
+	//if(b.get<1>()==10)
+	//  b.get<2>()=3.0; //ZhangYu 2013-5-13
     if (a.get<0> () == 0)
+    {
       return make_tuple (b.get<0> (), a.get<1> () + b.get<1> (), a.get<2> () + b.get<2> ());
+    }
     else
       return make_tuple (a.get<0> (), a.get<1> () + b.get<1> (), a.get<2> () + b.get<2> ());
   }
@@ -308,6 +318,11 @@ get (const boost::VertexIds&, ns3::Ptr<ns3::ndn::GlobalRouter> &gr)
   return gr->GetId ();
 }
 
+/* 这里是在dijkstra里面调用，最后到 relax中的const W& w_e = get(w, e);调用时调用的，
+ * 所以任何在dijkstra函数外部的对b<2>的设置都会被这里覆盖，都是无效的。
+ * 对edge的设置SetMetric是有用的。
+ * 2015-5-15
+ */
 inline property_traits< EdgeWeights >::reference
 get(const boost::EdgeWeights&, ns3::ndn::GlobalRouter::Incidency &edge)
 {
@@ -322,6 +337,7 @@ get(const boost::EdgeWeights&, ns3::ndn::GlobalRouter::Incidency &edge)
           delay = limits->GetLinkDelay ();
         }
       return property_traits< EdgeWeights >::reference (edge.get<1> (), edge.get<1> ()->GetMetric (), delay);
+      //return property_traits< EdgeWeights >::reference (edge.get<1> (), edge.get<1> ()->GetMetric (), 20.0);
     }
 }
 

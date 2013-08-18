@@ -64,8 +64,12 @@ main (int argc, char *argv[])
 
   // Creating 3x3 topology
   PointToPointHelper p2p;
+
   PointToPointGridHelper grid (3, 3, p2p);
-  grid.BoundingBox(100,100,200,200);
+  // ZhangYu in order to see the node number, make sure the font size is large engouth to be seen. so change the start and end x,y
+  //grid.BoundingBox(100,100,200,200);
+  grid.BoundingBox(20,20,80,80);
+
 
   // Install NDN stack on all nodes
   ndn::StackHelper ndnHelper;

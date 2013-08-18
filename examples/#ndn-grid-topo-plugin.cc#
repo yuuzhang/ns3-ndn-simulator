@@ -58,6 +58,7 @@ main (int argc, char *argv[])
   topologyReader.SetFileName ("src/ndnSIM/examples/topologies/topo-grid-3x3.txt");
   topologyReader.Read ();
 
+
   // Install NDN stack on all nodes
   ndn::StackHelper ndnHelper;
   ndnHelper.SetForwardingStrategy ("ns3::ndn::fw::BestRoute");

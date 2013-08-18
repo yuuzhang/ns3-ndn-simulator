@@ -58,7 +58,7 @@ main (int argc, char *argv[])
   ndn::StackHelper ndnHelper;
   ndnHelper.SetForwardingStrategy ("ns3::ndn::fw::BestRoute");
   ndnHelper.SetContentStore ("ns3::ndn::cs::Lru",
-                              "MaxSize", "10000");
+                              "MaxSize", "1");
   ndnHelper.InstallAll ();
 
   // Installing global routing interface on all nodes
@@ -73,7 +73,7 @@ main (int argc, char *argv[])
   Ptr<Node> producer2 = Names::Find<Node> ("Dst2");
 
   ndn::AppHelper consumerHelper ("ns3::ndn::ConsumerCbr");
-  consumerHelper.SetAttribute ("Frequency", StringValue ("100")); // 100 interests a second
+  consumerHelper.SetAttribute ("Frequency", StringValue ("5")); // 100 interests a second
 
   // on the first consumer node install a Consumer application
   // that will express interests in /dst1 namespace
@@ -103,7 +103,7 @@ main (int argc, char *argv[])
   // Calculate and install FIBs
   ndn::GlobalRoutingHelper::CalculateRoutes ();
 
-  Simulator::Stop (Seconds (20.0));
+  Simulator::Stop (Seconds (2));
 
   Simulator::Run ();
   Simulator::Destroy ();

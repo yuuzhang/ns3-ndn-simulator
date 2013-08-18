@@ -57,6 +57,8 @@ main (int argc, char *argv[])
   AnnotatedTopologyReader topologyReader ("", 25);
   topologyReader.SetFileName ("src/ndnSIM/examples/topologies/topo-grid-3x3.txt");
   topologyReader.Read ();
+  topologyReader.ApplyOspfMetric();
+
 
   // Install NDN stack on all nodes
   ndn::StackHelper ndnHelper;

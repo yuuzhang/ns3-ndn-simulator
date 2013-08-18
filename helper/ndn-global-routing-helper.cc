@@ -43,6 +43,8 @@
 // #include <boost/graph/graph_concepts.hpp>
 // #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/dijkstra_shortest_paths.hpp>
+//in order to analysis the shortest paths algorithms, use modified hpp,change the folder from
+// /usr/local/include to ndnSIM/boost_1_53_0/boost
 
 #include "boost-graph-ndn-global-routing-helper.h"
 
@@ -248,17 +250,65 @@ GlobalRoutingHelper::CalculateRoutes ()
     {
       Ptr<GlobalRouter> source = (*node)->GetObject<GlobalRouter> ();
       if (source == 0)
-	{
-	  NS_LOG_DEBUG ("Node " << (*node)->GetId () << " does not export GlobalRouter interface");
-	  continue;
-	}
+		{
+		  NS_LOG_DEBUG ("Node " << (*node)->GetId () << " does not export GlobalRouter interface");
+		  continue;
+		}
+
 
       DistancesMap    distances;
 
+      /* ZhangYu 2013-5-10 in the file boost-graph-ndn-global..,define the following
+       * typedef ns3::ndn::GlobalRouter::Incidency edge_descriptor in relax.hpp
+       */
+      ns3::ndn::GlobalRouter::IncidencyList edges;
+      ns3::ndn::GlobalRouter::Incidency edge;
+
+      edges=source->GetIncidencies();
+      //edge= edges.front();
+
+      typedef property_map<NdnGlobalRouterGraph, edge_weight_t>::type WeightMap;
+      typedef property_traits<WeightMap>::value_type W;
+      property_traits<EdgeWeights>::reference b;
+
+      const WeightMap& weightmap = get(edge_weight, graph);
+
+      BOOST_FOREACH(ns3::ndn::GlobalRouter::Incidency edge, edges){
+
+		(boost::get<1>(edge))->SetMetric(10);
+		if(source->GetId()==7)
+			(edge.get<1>())->SetMetric(50);
+		//boost::get<1>(source->GetIncidencies().front())->SetMetric(2);
+		NS_LOG_DEBUG("ZhangYu2013-5-15,  " <<source->GetId() << " " << (boost::get<0>(edge))->GetId());
+
+		//W w_e = get(weightmap, edge);
+		//b=boost::get(weightmap, edge);
+		//boost::get<1>(b)=20.0; b.get<2>()=30.0;
+
+		/*使用下面的语句进行赋值不报错，但是赋值完后，重新执行w_e-get(weightmap,edge）后，之前的值全部丢失，说明这种赋值语句并没有修改weightmap
+		* 本来不理解为啥metric是定义在Face中的，可以通过SetMetric来修改更改，然而在property_traits<WeightMap>::value_type中，
+		* 定义了Face, uint_16, double，当使用get(weightmap,edge)时，调用在boost-graph-ndn-global-routing-helper.h里的get函数，
+		* 返回了edge.get<1>()->GetMetric作为了value_type中的第2项
+		*/
+		//w_e.get<1>()=15; w_e.get<2>()=25.0;
+
+		//NS_LOG_DEBUG("ZhangYu2013-5-9,  " << (boost::get<1>(edge))->GetMetric()<< "   " << boost::get<0>(w_e)<<"   " << boost::get<1>(w_e)<< "   " << boost::get<2>(w_e));
+		//NS_LOG_DEBUG("ZhangYu2013-5-9,  " << b.get<1>() << "   " << boost::get<0>(w_e)<<"   " << boost::get<1>(w_e)<< "   " << boost::get<2>(w_e));
+
+		//NS_LOG_DEBUG("ZhangYu2013-5-1, distancesdfgh:asd  " << sizeof(weightmap) << sizeof(zyweightmap) << sizeof(graph));
+      }
+
+      //为了搞清楚这个函数，花费了很长时间。2013-5-10，在其中有多个同名函数模板的调用，最终会出现在函数dijkstra_bfs_visitor的relax中，
+      /*graph_traits<Graph>::edge_descriptor e
+       * put( DistanceMap& d, v=target(e,g), combine( get(d, u), get(property_traits<WeightMap>::value_type & w_e=get(w,e)
+       * 送给下面函数和边的权重相关的计算在 boost::WeightCombine中，根据property_traits< EdgeWeights >::reference b, b.get<1>()进行计算
+       */
       dijkstra_shortest_paths (graph, source,
 			       // predecessor_map (boost::ref(predecessors))
 			       // .
 			       distance_map (boost::ref(distances))
+			       .
+			       weight_map (weightmap)
 			       .
 			       distance_inf (WeightInf)
 			       .
@@ -269,7 +319,9 @@ GlobalRoutingHelper::CalculateRoutes ()
 			       distance_combine (boost::WeightCombine ())
 			       );
 
+
       // NS_LOG_DEBUG (predecessors.size () << ", " << distances.size ());
+      NS_LOG_DEBUG("ZhangYu2013-5-1, distances:" << distances.size());
 
       Ptr<Fib>  fib  = source->GetObject<Fib> ();
       fib->InvalidateAll ();

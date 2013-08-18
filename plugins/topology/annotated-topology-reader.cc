@@ -213,6 +213,7 @@ AnnotatedTopologyReader::Read (void)
       string from, to, capacity, metric, delay, maxPackets, lossRate;
 
       lineBuffer >> from >> to >> capacity >> metric >> delay >> maxPackets >> lossRate;
+      NS_LOG_DEBUG("ZhangYu 2013-5-7 metric before AddLink: " << metric);
 
       if (processedLinks[to].size () != 0 &&
           processedLinks[to].find (from) != processedLinks[to].end ())
@@ -241,6 +242,7 @@ AnnotatedTopologyReader::Read (void)
         link.SetAttribute ("LossRate", lossRate);
 
       AddLink (link);
+      //NS_LOG_DEBUG("ZhangYu 2013-5-9 metric after AddLink: " << metric);
       NS_LOG_DEBUG ("New link " << from << " <==> " << to << " / " << capacity << " with " << metric << " metric (" << delay << ", " << maxPackets << ", " << lossRate << ")");
     }
 
@@ -274,6 +276,7 @@ AnnotatedTopologyReader::ApplyOspfMetric ()
     {
       NS_LOG_DEBUG ("OSPF: " << link.GetAttribute ("OSPF"));
       uint16_t metric = boost::lexical_cast<uint16_t> (link.GetAttribute ("OSPF"));
+      NS_LOG_DEBUG("ZhangYu 2013-5-9 metric in ApplyOspfMetric: " << metric);
 
       {
         Ptr<Ipv4> ipv4 = link.GetFromNode ()->GetObject<Ipv4> ();
