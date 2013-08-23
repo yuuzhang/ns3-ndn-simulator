@@ -83,7 +83,7 @@ Producer::StartApplication ()
 
   App::StartApplication ();
 
-  NS_LOG_DEBUG ("NodeID: " << GetNode ()->GetId ());
+  NS_LOG_DEBUG ("ZhangYu 2013-8-20 NodeID: " << GetNode ()->GetId ());
   
   Ptr<Fib> fib = GetNode ()->GetObject<Fib> ();
   
@@ -119,14 +119,18 @@ Producer::OnInterest (const Ptr<const Interest> &interest, Ptr<Packet> origPacke
   static ContentObjectTail tail;
   Ptr<ContentObject> header = Create<ContentObject> ();
   header->SetName (Create<Name> (interest->GetName ()));
+
+  //ZhangYu 2013-8-20 for debug the contentObject header->GetName() in content-impl.cc
+  NS_LOG_DEBUG ("ZhangYu 2013-8-20 interest->GetName: " << header->GetName());
+
   header->SetFreshness (m_freshness);
 
   NS_LOG_INFO ("node("<< GetNode()->GetId() <<") respodning with ContentObject:\n" << boost::cref(*header));
   
   Ptr<Packet> packet = Create<Packet> (m_virtualPayloadSize);
-  
   packet->AddHeader (*header);
   packet->AddTrailer (tail);
+
 
   // Echo back FwHopCountTag if exists
   FwHopCountTag hopCountTag;

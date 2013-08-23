@@ -62,10 +62,14 @@ Consumer::GetTypeId (void)
                    MakeIntegerAccessor(&Consumer::m_seq),
                    MakeIntegerChecker<int32_t>())
 
+    /*下面语句中的MakeNameAccessor是一个宏定义： Make##type##Accessor定义的，in ns-3/src/sore/model/attribute-helper.h
+     * NS3中的属性不同与类属性，是一个个基于字符串的命名空间，类似文件系统的路径，支持正则表达式
+     */
     .AddAttribute ("Prefix","Name of the Interest",
                    StringValue ("/"),
                    MakeNameAccessor (&Consumer::m_interestName),
                    MakeNameChecker ())
+
     .AddAttribute ("LifeTime", "LifeTime for interest packet",
                    StringValue ("2s"),
                    MakeTimeAccessor (&Consumer::m_interestLifeTime),
@@ -83,7 +87,6 @@ Consumer::GetTypeId (void)
     .AddTraceSource ("FirstInterestDataDelay", "Delay between first transmitted Interest and received Data",
                      MakeTraceSourceAccessor (&Consumer::m_firstInterestDataDelay))
     ;
-
   return tid;
 }
 
@@ -197,6 +200,13 @@ Consumer::SendPacket ()
       seq = m_seq++;
     }
 
+
+  StringValue tmp;
+  this->GetAttribute("Prefix",tmp);
+  NS_LOG_DEBUG(this << " 2013-8-23 ZhangYu" << " NodeID: "  << this->m_node->GetId()
+		  <<" NodeName: "  <<  Names::FindName(this->m_node)
+  	  	  << " produce a interest,  Consumer::m_interestName: " << tmp.Get());
+
   //
   Ptr<Name> nameWithSequence = Create<Name> (m_interestName);
   (*nameWithSequence) (seq);
@@ -207,8 +217,11 @@ Consumer::SendPacket ()
   interestHeader.SetName                (nameWithSequence);
   interestHeader.SetInterestLifetime    (m_interestLifeTime);
 
+  NS_LOG_DEBUG("2013-8-21 ZhangYu nameWithSequence: "<<*nameWithSequence <<" " << interestHeader.GetName());
+  NS_LOG_DEBUG("2013-8-21 ZhangYu seq: " << seq);
+  NS_LOG_DEBUG("Requesting Interest: " << interestHeader);
   // NS_LOG_INFO ("Requesting Interest: \n" << interestHeader);
-  NS_LOG_INFO ("> Interest for " << seq);
+  //NS_LOG_INFO ("> Interest for " << seq);
 
   Ptr<Packet> packet = Create<Packet> ();
   packet->AddHeader (interestHeader);

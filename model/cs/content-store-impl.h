@@ -199,7 +199,8 @@ bool
 ContentStoreImpl<Policy>::Add (Ptr<const ContentObject> header, Ptr<const Packet> packet)
 {
   NS_LOG_FUNCTION (this << header->GetName ());
-  std::cout << "ZhangYu2013-8-4---------------------Add   " <<this->GetTypeId() << "   " << header->GetName() << std::endl;
+
+  NS_LOG_DEBUG("ZhangYu 2013-8-21 test----------------Add   " <<this->GetTypeId() << "   " << header->GetName());
 
   Ptr< entry > newEntry = Create< entry > (this, header, packet);
 

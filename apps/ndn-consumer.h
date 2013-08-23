@@ -63,6 +63,7 @@ public:
   virtual void
   OnNack (const Ptr<const Interest> &interest, Ptr<Packet> packet);
 
+  //下面函数的调用是在ndn-app.cc中的 m_app->OnContentObject (header, p/*payload*/);
   virtual void
   OnContentObject (const Ptr<const ContentObject> &contentObject,
                    Ptr<Packet> payload);

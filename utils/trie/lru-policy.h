@@ -85,7 +85,7 @@ struct lru_policy_traits
       inline bool
       insert (typename parent_trie::iterator item)
       {
-		std::cout << "ZhangYu2013-8-9-------------------------------------insert" << std::endl;
+  		std::cout << "ZhangYu2013-8-9-------------------------------------insert" << item->payload() << std::endl;
 
         if (max_size_ != 0 && policy_container::size () >= max_size_)
           {

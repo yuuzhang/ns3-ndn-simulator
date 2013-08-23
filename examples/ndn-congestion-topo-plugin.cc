@@ -61,7 +61,7 @@ main (int argc, char *argv[])
   ndn::StackHelper ndnHelper;
   ndnHelper.SetForwardingStrategy ("ns3::ndn::fw::BestRoute");
   ndnHelper.SetContentStore ("ns3::ndn::cs::Lru",
-                              "MaxSize", "10");
+                              "MaxSize", "100");
   ndnHelper.InstallAll ();
 
   // Installing global routing interface on all nodes
@@ -74,6 +74,7 @@ main (int argc, char *argv[])
 
   Ptr<Node> producer1 = Names::Find<Node> ("Dst1");
   Ptr<Node> producer2 = Names::Find<Node> ("Dst2");
+  std::cout <<"ZhangYu 2013-8-23 consumer1->GetId(): " << consumer1->GetId() << std::endl;
 
   ndn::AppHelper consumerHelper ("ns3::ndn::ConsumerCbr");
   consumerHelper.SetAttribute ("Frequency", StringValue ("5")); // 100 interests a second
@@ -106,12 +107,12 @@ main (int argc, char *argv[])
   // Calculate and install FIBs
   ndn::GlobalRoutingHelper::CalculateRoutes ();
 
-  Simulator::Stop (Seconds (2));
+  Simulator::Stop (Seconds (1));
 
   //ZhangYu Add the trace
 
   boost::tuple< boost::shared_ptr<std::ostream>, std::list<Ptr<ndn::CsTracer> > >
-    aggTracers = ndn::CsTracer::InstallAll ("cs-trace.txt", Seconds (1));
+  aggTracers = ndn::CsTracer::InstallAll ("cs-trace.txt", Seconds (1));
 
   Simulator::Run ();
   Simulator::Destroy ();

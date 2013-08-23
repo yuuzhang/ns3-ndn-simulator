@@ -91,10 +91,13 @@ AppFace::RegisterProtocolHandler (ProtocolHandler handler)
   m_app->RegisterProtocolHandler (MakeCallback (&Face::Receive, this));
 }
 
+// to pass packets from NDN stacks to the underlying layer(network or application)
 bool
 AppFace::SendImpl (Ptr<Packet> p)
 {
   NS_LOG_FUNCTION (this << p);
+
+  NS_LOG_DEBUG("ZhangYu 2013-8-21 SendImpl p: " << p);
 
   try
     {
@@ -113,11 +116,24 @@ AppFace::SendImpl (Ptr<Packet> p)
           
             break;
           }
+          /*在ns3的仿真中，可以产生和实际网络中一样的数据包，参见http://www.nsnam.org/doxygen-release/classns3_1_1_packet.html
+           * 每个网络数据包包括： a byte buffer, a set of byte tags, a set of packet tags, and metadat
+           */
         case HeaderHelper::CONTENT_OBJECT_NDNSIM:
           {
             static ContentObjectTail tail;
             Ptr<ContentObject> header = Create<ContentObject> ();
-            p->RemoveHeader (*header);
+
+            NS_LOG_DEBUG("ZhangYu 2013-8-22 case ::CONTENT_OBJECT_NDNSIM: " << p->GetSize());
+            NS_LOG_DEBUG("ZhangYu 2013-8-22 case ::CONTENT_OBJECT_NDNSIM: " << header->GetInstanceTypeId());
+            header->SetName("testHead");
+            /* 2013-8-22 如果没有上面的句子，下面执行中会报错，而不是编译时报错，是因为Name还没有被设置，是空的，所以获取的时候出错，
+             * 但是这样我就不能理解为什么生成一个空的ContentObject，名字没有设置，而可以从p中 remove
+             */
+            int temp=p->RemoveHeader (*header);
+            //temp=p->RemoveHeader (*header);
+            NS_LOG_DEBUG("ZhangYu 2013-8-22 case ::CONTENT_OBJECT_NDNSIM: " << p <<"  header   " << header->GetName()<< "  " << temp);
+
             p->RemoveTrailer (tail);
             m_app->OnContentObject (header, p/*payload*/);
           

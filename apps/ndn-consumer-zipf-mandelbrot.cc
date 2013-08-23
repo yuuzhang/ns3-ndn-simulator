@@ -183,6 +183,8 @@ ConsumerZipfMandelbrot::SendPacket() {
   interestHeader.SetNonce (m_rand.GetValue ());
   interestHeader.SetName  (nameWithSequence);
 
+  NS_LOG_DEBUG("ZhangYu 2013-8-20----- nameWithSequence: ");
+
   // NS_LOG_INFO ("Requesting Interest: \n" << interestHeader);
   NS_LOG_INFO ("> Interest for " << seq<<", Total: "<<m_seq<<", face: "<<m_face->GetId());
 

@@ -107,6 +107,9 @@ App::OnInterest (const Ptr<const Interest> &interest, Ptr<Packet> packet)
   m_receivedInterests (interest, this, m_face);
 }
 
+/* 当NDN的节点既没有Interest请求的内容，有没有空闲的端口转发Interest时，会给下游节点发回NACK 2013-8-20
+ * 但是这个类是consumer和producer的父类，看起来只是为了trace，因为每个都需要trace，而content object的处理是放在了consumer和producer中的
+ */
 void
 App::OnNack (const Ptr<const Interest> &interest, Ptr<Packet> packet)
 {
