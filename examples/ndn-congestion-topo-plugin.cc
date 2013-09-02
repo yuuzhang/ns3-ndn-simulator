@@ -74,7 +74,6 @@ main (int argc, char *argv[])
 
   Ptr<Node> producer1 = Names::Find<Node> ("Dst1");
   Ptr<Node> producer2 = Names::Find<Node> ("Dst2");
-  std::cout <<"ZhangYu 2013-8-23 consumer1->GetId(): " << consumer1->GetId() << std::endl;
 
   ndn::AppHelper consumerHelper ("ns3::ndn::ConsumerCbr");
   consumerHelper.SetAttribute ("Frequency", StringValue ("5")); // 100 interests a second
@@ -82,11 +81,13 @@ main (int argc, char *argv[])
   // on the first consumer node install a Consumer application
   // that will express interests in /dst1 namespace
   consumerHelper.SetPrefix ("/dst1");
+  std::cout <<"ZhangYu 2013-8-23 consumer1->GetId(): " << consumer1->GetId() << std::endl;
   consumerHelper.Install (consumer1);
 
   // on the second consumer node install a Consumer application
   // that will express interests in /dst2 namespace
   consumerHelper.SetPrefix ("/dst2");
+  std::cout <<"ZhangYu 2013-8-23 consumer2->GetId(): " << consumer2->GetId() << std::endl;
   consumerHelper.Install (consumer2);
   
   ndn::AppHelper producerHelper ("ns3::ndn::Producer");

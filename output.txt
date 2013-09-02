@@ -1,0 +1,285 @@
+Waf: Entering directory `/home/yuzhang/ndnSIM/ns-3/build'
+Waf: Leaving directory `/home/yuzhang/ndnSIM/ns-3/build'
+'build' finished successfully (2.745s)
+ZhangYu 2013-8-23 consumer1->GetId(): 0
+ZhangYu 2013-8-23 consumer2->GetId(): 1
+0s 0 ndn.fw:OnInterest(): [DEBUG] ZhangYu 2013-8-30 inFace, header, origPacket, pitEntry Src1 /dst1/0 25 0x9f62020
+0s 0 ndn.fw:OnInterest(): [DEBUG] ZhangYu 2013-8-29 Lookup header in m_contentStore: /dst1/0
+0s 0 ndn.fw:PropagateInterest(): [DEBUG] ZhangYu 2013-8-29 InterestLifetime: +2000000000.0ns
+0s 1 ndn.fw:OnInterest(): [DEBUG] ZhangYu 2013-8-30 inFace, header, origPacket, pitEntry Src2 /dst2/0 25 0x9f626c0
+0s 1 ndn.fw:OnInterest(): [DEBUG] ZhangYu 2013-8-29 Lookup header in m_contentStore: /dst2/0
+0s 1 ndn.fw:PropagateInterest(): [DEBUG] ZhangYu 2013-8-29 InterestLifetime: +2000000000.0ns
+0.0100216s 2 ndn.fw:OnInterest(): [DEBUG] ZhangYu 2013-8-30 inFace, header, origPacket, pitEntry Rtr1 /dst1/0 25 0x9f62a28
+0.0100216s 2 ndn.fw:OnInterest(): [DEBUG] ZhangYu 2013-8-29 Lookup header in m_contentStore: /dst1/0
+0.0100216s 2 ndn.fw:PropagateInterest(): [DEBUG] ZhangYu 2013-8-29 InterestLifetime: +2000000000.0ns
+0.0100216s 2 ndn.fw:OnInterest(): [DEBUG] ZhangYu 2013-8-30 inFace, header, origPacket, pitEntry Rtr1 /dst2/0 25 0x9f62c70
+0.0100216s 2 ndn.fw:OnInterest(): [DEBUG] ZhangYu 2013-8-29 Lookup header in m_contentStore: /dst2/0
+0.0100216s 2 ndn.fw:PropagateInterest(): [DEBUG] ZhangYu 2013-8-29 InterestLifetime: +2000000000.0ns
+0.0202376s 3 ndn.fw:OnInterest(): [DEBUG] ZhangYu 2013-8-30 inFace, header, origPacket, pitEntry Rtr2 /dst1/0 25 0x9f62e88
+0.0202376s 3 ndn.fw:OnInterest(): [DEBUG] ZhangYu 2013-8-29 Lookup header in m_contentStore: /dst1/0
+0.0202376s 3 ndn.fw:PropagateInterest(): [DEBUG] ZhangYu 2013-8-29 InterestLifetime: +2000000000.0ns
+0.0204536s 3 ndn.fw:OnInterest(): [DEBUG] ZhangYu 2013-8-30 inFace, header, origPacket, pitEntry Rtr2 /dst2/0 25 0x9f62b58
+0.0204536s 3 ndn.fw:OnInterest(): [DEBUG] ZhangYu 2013-8-29 Lookup header in m_contentStore: /dst2/0
+0.0204536s 3 ndn.fw:PropagateInterest(): [DEBUG] ZhangYu 2013-8-29 InterestLifetime: +2000000000.0ns
+0.0302592s 4 ndn.fw:OnInterest(): [DEBUG] ZhangYu 2013-8-30 inFace, header, origPacket, pitEntry Dst1 /dst1/0 25 0x9f62de0
+0.0302592s 4 ndn.fw:OnInterest(): [DEBUG] ZhangYu 2013-8-29 Lookup header in m_contentStore: /dst1/0
+0.0302592s 4 ndn.fw:PropagateInterest(): [DEBUG] ZhangYu 2013-8-29 InterestLifetime: +2000000000.0ns
+0.0302592s 4 ndn.fw:OnData(0x9f62210, /dst1/0, 0x9f636c0, 0x9f63628)
+0.0302592s 4 ndn.fw:OnData(): [DEBUG] ZhangYu 2013-8-30 inFaceNodeName: payload->GetSize:  Dst1  1024
+ZhangYu2013-8-9-------------------------------------insert0x9f62e70
+0.0302592s 4 ndn.fw:SatisfyPendingInterest(): [DEBUG] Satisfy dev[4]=net(0,4-3)
+0.0304752s 5 ndn.fw:OnInterest(): [DEBUG] ZhangYu 2013-8-30 inFace, header, origPacket, pitEntry Dst2 /dst2/0 25 0x9f62de0
+0.0304752s 5 ndn.fw:OnInterest(): [DEBUG] ZhangYu 2013-8-29 Lookup header in m_contentStore: /dst2/0
+0.0304752s 5 ndn.fw:PropagateInterest(): [DEBUG] ZhangYu 2013-8-29 InterestLifetime: +2000000000.0ns
+0.0304752s 5 ndn.fw:OnData(0x9f62400, /dst2/0, 0x9f63418, 0x9f63398)
+0.0304752s 5 ndn.fw:OnData(): [DEBUG] ZhangYu 2013-8-30 inFaceNodeName: payload->GetSize:  Dst2  1024
+ZhangYu2013-8-9-------------------------------------insert0x9f63030
+0.0304752s 5 ndn.fw:SatisfyPendingInterest(): [DEBUG] Satisfy dev[5]=net(0,5-3)
+0.0411048s 3 ndn.fw:OnData(0x9f5cae8, /dst1/0, 0x9f63418, 0x9f63808)
+0.0411048s 3 ndn.fw:OnData(): [DEBUG] ZhangYu 2013-8-30 inFaceNodeName: payload->GetSize:  Rtr2  1024
+ZhangYu2013-8-9-------------------------------------insert0x9f62be8
+0.0411048s 3 ndn.fw:SatisfyPendingInterest(): [DEBUG] Satisfy dev[3]=net(0,2-3)
+0.0413208s 3 ndn.fw:OnData(0x9f5cb88, /dst2/0, 0x9f63418, 0x9f63a20)
+0.0413208s 3 ndn.fw:OnData(): [DEBUG] ZhangYu 2013-8-30 inFaceNodeName: payload->GetSize:  Rtr2  1024
+ZhangYu2013-8-9-------------------------------------insert0x9f5aa50
+0.0413208s 3 ndn.fw:SatisfyPendingInterest(): [DEBUG] Satisfy dev[3]=net(0,2-3)
+0.0595608s 2 ndn.fw:OnData(0x9f5c6c8, /dst1/0, 0x9f63418, 0x9f636c0)
+0.0595608s 2 ndn.fw:OnData(): [DEBUG] ZhangYu 2013-8-30 inFaceNodeName: payload->GetSize:  Rtr1  1024
+ZhangYu2013-8-9-------------------------------------insert0x9f629a0
+0.0595608s 2 ndn.fw:SatisfyPendingInterest(): [DEBUG] Satisfy dev[2]=net(0,0-2)
+0.0680168s 2 ndn.fw:OnData(0x9f5c6c8, /dst2/0, 0x9f63418, 0x9f63808)
+0.0680168s 2 ndn.fw:OnData(): [DEBUG] ZhangYu 2013-8-30 inFaceNodeName: payload->GetSize:  Rtr1  1024
+ZhangYu2013-8-9-------------------------------------insert0x9f62868
+0.0680168s 2 ndn.fw:SatisfyPendingInterest(): [DEBUG] Satisfy dev[2]=net(1,1-2)
+0.0704064s 0 ndn.fw:OnData(0x9f5bd48, /dst1/0, 0x9f63418, 0x9f631a0)
+0.0704064s 0 ndn.fw:OnData(): [DEBUG] ZhangYu 2013-8-30 inFaceNodeName: payload->GetSize:  Src1  1024
+ZhangYu2013-8-9-------------------------------------insert0x9f5b290
+0.0704064s 0 ndn.fw:SatisfyPendingInterest(): [DEBUG] Satisfy dev=local(1)
+0.0788624s 1 ndn.fw:OnData(0x9f5c290, /dst2/0, 0x9f62d98, 0x9f636c0)
+0.0788624s 1 ndn.fw:OnData(): [DEBUG] ZhangYu 2013-8-30 inFaceNodeName: payload->GetSize:  Src2  1024
+ZhangYu2013-8-9-------------------------------------insert0x9f59018
+0.0788624s 1 ndn.fw:SatisfyPendingInterest(): [DEBUG] Satisfy dev=local(1)
+0.2s 0 ndn.fw:OnInterest(): [DEBUG] ZhangYu 2013-8-30 inFace, header, origPacket, pitEntry Src1 /dst1/1 25 0x9f62020
+0.2s 0 ndn.fw:OnInterest(): [DEBUG] ZhangYu 2013-8-29 Lookup header in m_contentStore: /dst1/1
+0.2s 0 ndn.fw:PropagateInterest(): [DEBUG] ZhangYu 2013-8-29 InterestLifetime: +2000000000.0ns
+0.2s 1 ndn.fw:OnInterest(): [DEBUG] ZhangYu 2013-8-30 inFace, header, origPacket, pitEntry Src2 /dst2/1 25 0x9f62628
+0.2s 1 ndn.fw:OnInterest(): [DEBUG] ZhangYu 2013-8-29 Lookup header in m_contentStore: /dst2/1
+0.2s 1 ndn.fw:PropagateInterest(): [DEBUG] ZhangYu 2013-8-29 InterestLifetime: +2000000000.0ns
+0.210022s 2 ndn.fw:OnInterest(): [DEBUG] ZhangYu 2013-8-30 inFace, header, origPacket, pitEntry Rtr1 /dst1/1 25 0x9f62e88
+0.210022s 2 ndn.fw:OnInterest(): [DEBUG] ZhangYu 2013-8-29 Lookup header in m_contentStore: /dst1/1
+0.210022s 2 ndn.fw:PropagateInterest(): [DEBUG] ZhangYu 2013-8-29 InterestLifetime: +2000000000.0ns
+0.210022s 2 ndn.fw:OnInterest(): [DEBUG] ZhangYu 2013-8-30 inFace, header, origPacket, pitEntry Rtr1 /dst2/1 25 0x9f63ca0
+0.210022s 2 ndn.fw:OnInterest(): [DEBUG] ZhangYu 2013-8-29 Lookup header in m_contentStore: /dst2/1
+0.210022s 2 ndn.fw:PropagateInterest(): [DEBUG] ZhangYu 2013-8-29 InterestLifetime: +2000000000.0ns
+0.220238s 3 ndn.fw:OnInterest(): [DEBUG] ZhangYu 2013-8-30 inFace, header, origPacket, pitEntry Rtr2 /dst1/1 25 0x9f63ed0
+0.220238s 3 ndn.fw:OnInterest(): [DEBUG] ZhangYu 2013-8-29 Lookup header in m_contentStore: /dst1/1
+0.220238s 3 ndn.fw:PropagateInterest(): [DEBUG] ZhangYu 2013-8-29 InterestLifetime: +2000000000.0ns
+0.220454s 3 ndn.fw:OnInterest(): [DEBUG] ZhangYu 2013-8-30 inFace, header, origPacket, pitEntry Rtr2 /dst2/1 25 0x9f64170
+0.220454s 3 ndn.fw:OnInterest(): [DEBUG] ZhangYu 2013-8-29 Lookup header in m_contentStore: /dst2/1
+0.220454s 3 ndn.fw:PropagateInterest(): [DEBUG] ZhangYu 2013-8-29 InterestLifetime: +2000000000.0ns
+0.230259s 4 ndn.fw:OnInterest(): [DEBUG] ZhangYu 2013-8-30 inFace, header, origPacket, pitEntry Dst1 /dst1/1 25 0x9f643d0
+0.230259s 4 ndn.fw:OnInterest(): [DEBUG] ZhangYu 2013-8-29 Lookup header in m_contentStore: /dst1/1
+0.230259s 4 ndn.fw:PropagateInterest(): [DEBUG] ZhangYu 2013-8-29 InterestLifetime: +2000000000.0ns
+0.230259s 4 ndn.fw:OnData(0x9f62210, /dst1/1, 0x9f646e0, 0x9f64648)
+0.230259s 4 ndn.fw:OnData(): [DEBUG] ZhangYu 2013-8-30 inFaceNodeName: payload->GetSize:  Dst1  1024
+ZhangYu2013-8-9-------------------------------------insert0x9f644c8
+0.230259s 4 ndn.fw:SatisfyPendingInterest(): [DEBUG] Satisfy dev[4]=net(0,4-3)
+0.230475s 5 ndn.fw:OnInterest(): [DEBUG] ZhangYu 2013-8-30 inFace, header, origPacket, pitEntry Dst2 /dst2/1 25 0x9f63e28
+0.230475s 5 ndn.fw:OnInterest(): [DEBUG] ZhangYu 2013-8-29 Lookup header in m_contentStore: /dst2/1
+0.230475s 5 ndn.fw:PropagateInterest(): [DEBUG] ZhangYu 2013-8-29 InterestLifetime: +2000000000.0ns
+0.230475s 5 ndn.fw:OnData(0x9f62400, /dst2/1, 0x9f643d0, 0x9f64568)
+0.230475s 5 ndn.fw:OnData(): [DEBUG] ZhangYu 2013-8-30 inFaceNodeName: payload->GetSize:  Dst2  1024
+ZhangYu2013-8-9-------------------------------------insert0x9f64678
+0.230475s 5 ndn.fw:SatisfyPendingInterest(): [DEBUG] Satisfy dev[5]=net(0,5-3)
+0.241105s 3 ndn.fw:OnData(0x9f5cae8, /dst1/1, 0x9f643d0, 0x9f64828)
+0.241105s 3 ndn.fw:OnData(): [DEBUG] ZhangYu 2013-8-30 inFaceNodeName: payload->GetSize:  Rtr2  1024
+ZhangYu2013-8-9-------------------------------------insert0x9f636f0
+0.241105s 3 ndn.fw:SatisfyPendingInterest(): [DEBUG] Satisfy dev[3]=net(0,2-3)
+0.241321s 3 ndn.fw:OnData(0x9f5cb88, /dst2/1, 0x9f64828, 0x9f649d8)
+0.241321s 3 ndn.fw:OnData(): [DEBUG] ZhangYu 2013-8-30 inFaceNodeName: payload->GetSize:  Rtr2  1024
+ZhangYu2013-8-9-------------------------------------insert0x9f63dc8
+0.241321s 3 ndn.fw:SatisfyPendingInterest(): [DEBUG] Satisfy dev[3]=net(0,2-3)
+0.259561s 2 ndn.fw:OnData(0x9f5c6c8, /dst1/1, 0x9f64828, 0x9f64128)
+0.259561s 2 ndn.fw:OnData(): [DEBUG] ZhangYu 2013-8-30 inFaceNodeName: payload->GetSize:  Rtr1  1024
+ZhangYu2013-8-9-------------------------------------insert0x9f64100
+0.259561s 2 ndn.fw:SatisfyPendingInterest(): [DEBUG] Satisfy dev[2]=net(0,0-2)
+0.268017s 2 ndn.fw:OnData(0x9f5c6c8, /dst2/1, 0x9f64828, 0x9f63e70)
+0.268017s 2 ndn.fw:OnData(): [DEBUG] ZhangYu 2013-8-30 inFaceNodeName: payload->GetSize:  Rtr1  1024
+ZhangYu2013-8-9-------------------------------------insert0x9f64a08
+0.268017s 2 ndn.fw:SatisfyPendingInterest(): [DEBUG] Satisfy dev[2]=net(1,1-2)
+0.270406s 0 ndn.fw:OnData(0x9f5bd48, /dst1/1, 0x9f64828, 0x9f63c40)
+0.270406s 0 ndn.fw:OnData(): [DEBUG] ZhangYu 2013-8-30 inFaceNodeName: payload->GetSize:  Src1  1024
+ZhangYu2013-8-9-------------------------------------insert0x9f583b0
+0.270406s 0 ndn.fw:SatisfyPendingInterest(): [DEBUG] Satisfy dev=local(1)
+0.278862s 1 ndn.fw:OnData(0x9f5c290, /dst2/1, 0x9f63e70, 0x9f64128)
+0.278862s 1 ndn.fw:OnData(): [DEBUG] ZhangYu 2013-8-30 inFaceNodeName: payload->GetSize:  Src2  1024
+ZhangYu2013-8-9-------------------------------------insert0x9f59f00
+0.278862s 1 ndn.fw:SatisfyPendingInterest(): [DEBUG] Satisfy dev=local(1)
+0.4s 0 ndn.fw:OnInterest(): [DEBUG] ZhangYu 2013-8-30 inFace, header, origPacket, pitEntry Src1 /dst1/2 25 0x9f62020
+0.4s 0 ndn.fw:OnInterest(): [DEBUG] ZhangYu 2013-8-29 Lookup header in m_contentStore: /dst1/2
+0.4s 0 ndn.fw:PropagateInterest(): [DEBUG] ZhangYu 2013-8-29 InterestLifetime: +2000000000.0ns
+0.4s 1 ndn.fw:OnInterest(): [DEBUG] ZhangYu 2013-8-30 inFace, header, origPacket, pitEntry Src2 /dst2/2 25 0x9f62cb8
+0.4s 1 ndn.fw:OnInterest(): [DEBUG] ZhangYu 2013-8-29 Lookup header in m_contentStore: /dst2/2
+0.4s 1 ndn.fw:PropagateInterest(): [DEBUG] ZhangYu 2013-8-29 InterestLifetime: +2000000000.0ns
+0.410022s 2 ndn.fw:OnInterest(): [DEBUG] ZhangYu 2013-8-30 inFace, header, origPacket, pitEntry Rtr1 /dst1/2 25 0x9f64268
+0.410022s 2 ndn.fw:OnInterest(): [DEBUG] ZhangYu 2013-8-29 Lookup header in m_contentStore: /dst1/2
+0.410022s 2 ndn.fw:PropagateInterest(): [DEBUG] ZhangYu 2013-8-29 InterestLifetime: +2000000000.0ns
+0.410022s 2 ndn.fw:OnInterest(): [DEBUG] ZhangYu 2013-8-30 inFace, header, origPacket, pitEntry Rtr1 /dst2/2 25 0x9f63ef8
+0.410022s 2 ndn.fw:OnInterest(): [DEBUG] ZhangYu 2013-8-29 Lookup header in m_contentStore: /dst2/2
+0.410022s 2 ndn.fw:PropagateInterest(): [DEBUG] ZhangYu 2013-8-29 InterestLifetime: +2000000000.0ns
+0.420238s 3 ndn.fw:OnInterest(): [DEBUG] ZhangYu 2013-8-30 inFace, header, origPacket, pitEntry Rtr2 /dst1/2 25 0x9f64ba0
+0.420238s 3 ndn.fw:OnInterest(): [DEBUG] ZhangYu 2013-8-29 Lookup header in m_contentStore: /dst1/2
+0.420238s 3 ndn.fw:PropagateInterest(): [DEBUG] ZhangYu 2013-8-29 InterestLifetime: +2000000000.0ns
+0.420454s 3 ndn.fw:OnInterest(): [DEBUG] ZhangYu 2013-8-30 inFace, header, origPacket, pitEntry Rtr2 /dst2/2 25 0x9f64e40
+0.420454s 3 ndn.fw:OnInterest(): [DEBUG] ZhangYu 2013-8-29 Lookup header in m_contentStore: /dst2/2
+0.420454s 3 ndn.fw:PropagateInterest(): [DEBUG] ZhangYu 2013-8-29 InterestLifetime: +2000000000.0ns
+0.430259s 4 ndn.fw:OnInterest(): [DEBUG] ZhangYu 2013-8-30 inFace, header, origPacket, pitEntry Dst1 /dst1/2 25 0x9f65090
+0.430259s 4 ndn.fw:OnInterest(): [DEBUG] ZhangYu 2013-8-29 Lookup header in m_contentStore: /dst1/2
+0.430259s 4 ndn.fw:PropagateInterest(): [DEBUG] ZhangYu 2013-8-29 InterestLifetime: +2000000000.0ns
+0.430259s 4 ndn.fw:OnData(0x9f62210, /dst1/2, 0x9f65380, 0x9f652e8)
+0.430259s 4 ndn.fw:OnData(): [DEBUG] ZhangYu 2013-8-30 inFaceNodeName: payload->GetSize:  Dst1  1024
+ZhangYu2013-8-9-------------------------------------insert0x9f65030
+0.430259s 4 ndn.fw:SatisfyPendingInterest(): [DEBUG] Satisfy dev[4]=net(0,4-3)
+0.430475s 5 ndn.fw:OnInterest(): [DEBUG] ZhangYu 2013-8-30 inFace, header, origPacket, pitEntry Dst2 /dst2/2 25 0x9f64d28
+0.430475s 5 ndn.fw:OnInterest(): [DEBUG] ZhangYu 2013-8-29 Lookup header in m_contentStore: /dst2/2
+0.430475s 5 ndn.fw:PropagateInterest(): [DEBUG] ZhangYu 2013-8-29 InterestLifetime: +2000000000.0ns
+0.430475s 5 ndn.fw:OnData(0x9f62400, /dst2/2, 0x9f650f0, 0x9f65250)
+0.430475s 5 ndn.fw:OnData(): [DEBUG] ZhangYu 2013-8-30 inFaceNodeName: payload->GetSize:  Dst2  1024
+ZhangYu2013-8-9-------------------------------------insert0x9f64db8
+0.430475s 5 ndn.fw:SatisfyPendingInterest(): [DEBUG] Satisfy dev[5]=net(0,5-3)
+0.441105s 3 ndn.fw:OnData(0x9f5cae8, /dst1/2, 0x9f650f0, 0x9f654e0)
+0.441105s 3 ndn.fw:OnData(): [DEBUG] ZhangYu 2013-8-30 inFaceNodeName: payload->GetSize:  Rtr2  1024
+ZhangYu2013-8-9-------------------------------------insert0x9f63d80
+0.441105s 3 ndn.fw:SatisfyPendingInterest(): [DEBUG] Satisfy dev[3]=net(0,2-3)
+0.441321s 3 ndn.fw:OnData(0x9f5cb88, /dst2/2, 0x9f65048, 0x9f65690)
+0.441321s 3 ndn.fw:OnData(): [DEBUG] ZhangYu 2013-8-30 inFaceNodeName: payload->GetSize:  Rtr2  1024
+ZhangYu2013-8-9-------------------------------------insert0x9f63d48
+0.441321s 3 ndn.fw:SatisfyPendingInterest(): [DEBUG] Satisfy dev[3]=net(0,2-3)
+0.459561s 2 ndn.fw:OnData(0x9f5c6c8, /dst1/2, 0x9f64048, 0x9f65790)
+0.459561s 2 ndn.fw:OnData(): [DEBUG] ZhangYu 2013-8-30 inFaceNodeName: payload->GetSize:  Rtr1  1024
+ZhangYu2013-8-9-------------------------------------insert0x9f64de0
+0.459561s 2 ndn.fw:SatisfyPendingInterest(): [DEBUG] Satisfy dev[2]=net(0,0-2)
+0.468017s 2 ndn.fw:OnData(0x9f5c6c8, /dst2/2, 0x9f64048, 0x9f650f0)
+0.468017s 2 ndn.fw:OnData(): [DEBUG] ZhangYu 2013-8-30 inFaceNodeName: payload->GetSize:  Rtr1  1024
+ZhangYu2013-8-9-------------------------------------insert0x9f5a638
+0.468017s 2 ndn.fw:SatisfyPendingInterest(): [DEBUG] Satisfy dev[2]=net(1,1-2)
+0.470406s 0 ndn.fw:OnData(0x9f5bd48, /dst1/2, 0x9f64048, 0x9f65690)
+0.470406s 0 ndn.fw:OnData(): [DEBUG] ZhangYu 2013-8-30 inFaceNodeName: payload->GetSize:  Src1  1024
+ZhangYu2013-8-9-------------------------------------insert0x9f5a1d0
+0.470406s 0 ndn.fw:SatisfyPendingInterest(): [DEBUG] Satisfy dev=local(1)
+0.478862s 1 ndn.fw:OnData(0x9f5c290, /dst2/2, 0x9f63ef8, 0x9f65790)
+0.478862s 1 ndn.fw:OnData(): [DEBUG] ZhangYu 2013-8-30 inFaceNodeName: payload->GetSize:  Src2  1024
+ZhangYu2013-8-9-------------------------------------insert0x9f64158
+0.478862s 1 ndn.fw:SatisfyPendingInterest(): [DEBUG] Satisfy dev=local(1)
+0.6s 0 ndn.fw:OnInterest(): [DEBUG] ZhangYu 2013-8-30 inFace, header, origPacket, pitEntry Src1 /dst1/3 25 0x9f62cb8
+0.6s 0 ndn.fw:OnInterest(): [DEBUG] ZhangYu 2013-8-29 Lookup header in m_contentStore: /dst1/3
+0.6s 0 ndn.fw:PropagateInterest(): [DEBUG] ZhangYu 2013-8-29 InterestLifetime: +2000000000.0ns
+0.6s 1 ndn.fw:OnInterest(): [DEBUG] ZhangYu 2013-8-30 inFace, header, origPacket, pitEntry Src2 /dst2/3 25 0x9f64e40
+0.6s 1 ndn.fw:OnInterest(): [DEBUG] ZhangYu 2013-8-29 Lookup header in m_contentStore: /dst2/3
+0.6s 1 ndn.fw:PropagateInterest(): [DEBUG] ZhangYu 2013-8-29 InterestLifetime: +2000000000.0ns
+0.610022s 2 ndn.fw:OnInterest(): [DEBUG] ZhangYu 2013-8-30 inFace, header, origPacket, pitEntry Rtr1 /dst1/3 25 0x9f64268
+0.610022s 2 ndn.fw:OnInterest(): [DEBUG] ZhangYu 2013-8-29 Lookup header in m_contentStore: /dst1/3
+0.610022s 2 ndn.fw:PropagateInterest(): [DEBUG] ZhangYu 2013-8-29 InterestLifetime: +2000000000.0ns
+0.610022s 2 ndn.fw:OnInterest(): [DEBUG] ZhangYu 2013-8-30 inFace, header, origPacket, pitEntry Rtr1 /dst2/3 25 0x9f64bf8
+0.610022s 2 ndn.fw:OnInterest(): [DEBUG] ZhangYu 2013-8-29 Lookup header in m_contentStore: /dst2/3
+0.610022s 2 ndn.fw:PropagateInterest(): [DEBUG] ZhangYu 2013-8-29 InterestLifetime: +2000000000.0ns
+0.620238s 3 ndn.fw:OnInterest(): [DEBUG] ZhangYu 2013-8-30 inFace, header, origPacket, pitEntry Rtr2 /dst1/3 25 0x9f65880
+0.620238s 3 ndn.fw:OnInterest(): [DEBUG] ZhangYu 2013-8-29 Lookup header in m_contentStore: /dst1/3
+0.620238s 3 ndn.fw:PropagateInterest(): [DEBUG] ZhangYu 2013-8-29 InterestLifetime: +2000000000.0ns
+0.620454s 3 ndn.fw:OnInterest(): [DEBUG] ZhangYu 2013-8-30 inFace, header, origPacket, pitEntry Rtr2 /dst2/3 25 0x9f65b00
+0.620454s 3 ndn.fw:OnInterest(): [DEBUG] ZhangYu 2013-8-29 Lookup header in m_contentStore: /dst2/3
+0.620454s 3 ndn.fw:PropagateInterest(): [DEBUG] ZhangYu 2013-8-29 InterestLifetime: +2000000000.0ns
+0.630259s 4 ndn.fw:OnInterest(): [DEBUG] ZhangYu 2013-8-30 inFace, header, origPacket, pitEntry Dst1 /dst1/3 25 0x9f65d40
+0.630259s 4 ndn.fw:OnInterest(): [DEBUG] ZhangYu 2013-8-29 Lookup header in m_contentStore: /dst1/3
+0.630259s 4 ndn.fw:PropagateInterest(): [DEBUG] ZhangYu 2013-8-29 InterestLifetime: +2000000000.0ns
+0.630259s 4 ndn.fw:OnData(0x9f62210, /dst1/3, 0x9f66058, 0x9f65fc0)
+0.630259s 4 ndn.fw:OnData(): [DEBUG] ZhangYu 2013-8-30 inFaceNodeName: payload->GetSize:  Dst1  1024
+ZhangYu2013-8-9-------------------------------------insert0x9f62910
+0.630259s 4 ndn.fw:SatisfyPendingInterest(): [DEBUG] Satisfy dev[4]=net(0,4-3)
+0.630475s 5 ndn.fw:OnInterest(): [DEBUG] ZhangYu 2013-8-30 inFace, header, origPacket, pitEntry Dst2 /dst2/3 25 0x9f659c8
+0.630475s 5 ndn.fw:OnInterest(): [DEBUG] ZhangYu 2013-8-29 Lookup header in m_contentStore: /dst2/3
+0.630475s 5 ndn.fw:PropagateInterest(): [DEBUG] ZhangYu 2013-8-29 InterestLifetime: +2000000000.0ns
+0.630475s 5 ndn.fw:OnData(0x9f62400, /dst2/3, 0x9f65d90, 0x9f65f18)
+0.630475s 5 ndn.fw:OnData(): [DEBUG] ZhangYu 2013-8-30 inFaceNodeName: payload->GetSize:  Dst2  1024
+ZhangYu2013-8-9-------------------------------------insert0x9f65ae8
+0.630475s 5 ndn.fw:SatisfyPendingInterest(): [DEBUG] Satisfy dev[5]=net(0,5-3)
+0.641105s 3 ndn.fw:OnData(0x9f5cae8, /dst1/3, 0x9f65d90, 0x9f661a0)
+0.641105s 3 ndn.fw:OnData(): [DEBUG] ZhangYu 2013-8-30 inFaceNodeName: payload->GetSize:  Rtr2  1024
+ZhangYu2013-8-9-------------------------------------insert0x9f63900
+0.641105s 3 ndn.fw:SatisfyPendingInterest(): [DEBUG] Satisfy dev[3]=net(0,2-3)
+0.641321s 3 ndn.fw:OnData(0x9f5cb88, /dst2/3, 0x9f65d90, 0x9f66350)
+0.641321s 3 ndn.fw:OnData(): [DEBUG] ZhangYu 2013-8-30 inFaceNodeName: payload->GetSize:  Rtr2  1024
+ZhangYu2013-8-9-------------------------------------insert0x9f62c58
+0.641321s 3 ndn.fw:SatisfyPendingInterest(): [DEBUG] Satisfy dev[3]=net(0,2-3)
+0.659561s 2 ndn.fw:OnData(0x9f5c6c8, /dst1/3, 0x9f65d90, 0x9f66290)
+0.659561s 2 ndn.fw:OnData(): [DEBUG] ZhangYu 2013-8-30 inFaceNodeName: payload->GetSize:  Rtr1  1024
+ZhangYu2013-8-9-------------------------------------insert0x9f65990
+0.659561s 2 ndn.fw:SatisfyPendingInterest(): [DEBUG] Satisfy dev[2]=net(0,0-2)
+0.668017s 2 ndn.fw:OnData(0x9f5c6c8, /dst2/3, 0x9f65d90, 0x9f661a0)
+0.668017s 2 ndn.fw:OnData(): [DEBUG] ZhangYu 2013-8-30 inFaceNodeName: payload->GetSize:  Rtr1  1024
+ZhangYu2013-8-9-------------------------------------insert0x9f63298
+0.668017s 2 ndn.fw:SatisfyPendingInterest(): [DEBUG] Satisfy dev[2]=net(1,1-2)
+0.670406s 0 ndn.fw:OnData(0x9f5bd48, /dst1/3, 0x9f65d90, 0x9f66350)
+0.670406s 0 ndn.fw:OnData(): [DEBUG] ZhangYu 2013-8-30 inFaceNodeName: payload->GetSize:  Src1  1024
+ZhangYu2013-8-9-------------------------------------insert0x9f591c8
+0.670406s 0 ndn.fw:SatisfyPendingInterest(): [DEBUG] Satisfy dev=local(1)
+0.678862s 1 ndn.fw:OnData(0x9f5c290, /dst2/3, 0x9f661a0, 0x9f66290)
+0.678862s 1 ndn.fw:OnData(): [DEBUG] ZhangYu 2013-8-30 inFaceNodeName: payload->GetSize:  Src2  1024
+ZhangYu2013-8-9-------------------------------------insert0x9f5a838
+0.678862s 1 ndn.fw:SatisfyPendingInterest(): [DEBUG] Satisfy dev=local(1)
+0.8s 0 ndn.fw:OnInterest(): [DEBUG] ZhangYu 2013-8-30 inFace, header, origPacket, pitEntry Src1 /dst1/4 25 0x9f62cb8
+0.8s 0 ndn.fw:OnInterest(): [DEBUG] ZhangYu 2013-8-29 Lookup header in m_contentStore: /dst1/4
+0.8s 0 ndn.fw:PropagateInterest(): [DEBUG] ZhangYu 2013-8-29 InterestLifetime: +2000000000.0ns
+0.8s 1 ndn.fw:OnInterest(): [DEBUG] ZhangYu 2013-8-30 inFace, header, origPacket, pitEntry Src2 /dst2/4 25 0x9f63fe0
+0.8s 1 ndn.fw:OnInterest(): [DEBUG] ZhangYu 2013-8-29 Lookup header in m_contentStore: /dst2/4
+0.8s 1 ndn.fw:PropagateInterest(): [DEBUG] ZhangYu 2013-8-29 InterestLifetime: +2000000000.0ns
+0.810022s 2 ndn.fw:OnInterest(): [DEBUG] ZhangYu 2013-8-30 inFace, header, origPacket, pitEntry Rtr1 /dst1/4 25 0x9f65820
+0.810022s 2 ndn.fw:OnInterest(): [DEBUG] ZhangYu 2013-8-29 Lookup header in m_contentStore: /dst1/4
+0.810022s 2 ndn.fw:PropagateInterest(): [DEBUG] ZhangYu 2013-8-29 InterestLifetime: +2000000000.0ns
+0.810022s 2 ndn.fw:OnInterest(): [DEBUG] ZhangYu 2013-8-30 inFace, header, origPacket, pitEntry Rtr1 /dst2/4 25 0x9f65b88
+0.810022s 2 ndn.fw:OnInterest(): [DEBUG] ZhangYu 2013-8-29 Lookup header in m_contentStore: /dst2/4
+0.810022s 2 ndn.fw:PropagateInterest(): [DEBUG] ZhangYu 2013-8-29 InterestLifetime: +2000000000.0ns
+0.820238s 3 ndn.fw:OnInterest(): [DEBUG] ZhangYu 2013-8-30 inFace, header, origPacket, pitEntry Rtr2 /dst1/4 25 0x9f66540
+0.820238s 3 ndn.fw:OnInterest(): [DEBUG] ZhangYu 2013-8-29 Lookup header in m_contentStore: /dst1/4
+0.820238s 3 ndn.fw:PropagateInterest(): [DEBUG] ZhangYu 2013-8-29 InterestLifetime: +2000000000.0ns
+0.820454s 3 ndn.fw:OnInterest(): [DEBUG] ZhangYu 2013-8-30 inFace, header, origPacket, pitEntry Rtr2 /dst2/4 25 0x9f667d8
+0.820454s 3 ndn.fw:OnInterest(): [DEBUG] ZhangYu 2013-8-29 Lookup header in m_contentStore: /dst2/4
+0.820454s 3 ndn.fw:PropagateInterest(): [DEBUG] ZhangYu 2013-8-29 InterestLifetime: +2000000000.0ns
+0.830259s 4 ndn.fw:OnInterest(): [DEBUG] ZhangYu 2013-8-30 inFace, header, origPacket, pitEntry Dst1 /dst1/4 25 0x9f66a18
+0.830259s 4 ndn.fw:OnInterest(): [DEBUG] ZhangYu 2013-8-29 Lookup header in m_contentStore: /dst1/4
+0.830259s 4 ndn.fw:PropagateInterest(): [DEBUG] ZhangYu 2013-8-29 InterestLifetime: +2000000000.0ns
+0.830259s 4 ndn.fw:OnData(0x9f62210, /dst1/4, 0x9f66d08, 0x9f66c70)
+0.830259s 4 ndn.fw:OnData(): [DEBUG] ZhangYu 2013-8-30 inFaceNodeName: payload->GetSize:  Dst1  1024
+ZhangYu2013-8-9-------------------------------------insert0x9f64368
+0.830259s 4 ndn.fw:SatisfyPendingInterest(): [DEBUG] Satisfy dev[4]=net(0,4-3)
+0.830475s 5 ndn.fw:OnInterest(): [DEBUG] ZhangYu 2013-8-30 inFace, header, origPacket, pitEntry Dst2 /dst2/4 25 0x9f666a0
+0.830475s 5 ndn.fw:OnInterest(): [DEBUG] ZhangYu 2013-8-29 Lookup header in m_contentStore: /dst2/4
+0.830475s 5 ndn.fw:PropagateInterest(): [DEBUG] ZhangYu 2013-8-29 InterestLifetime: +2000000000.0ns
+0.830475s 5 ndn.fw:OnData(0x9f62400, /dst2/4, 0x9f66aa0, 0x9f66a18)
+0.830475s 5 ndn.fw:OnData(): [DEBUG] ZhangYu 2013-8-30 inFaceNodeName: payload->GetSize:  Dst2  1024
+ZhangYu2013-8-9-------------------------------------insert0x9f66730
+0.830475s 5 ndn.fw:SatisfyPendingInterest(): [DEBUG] Satisfy dev[5]=net(0,5-3)
+0.841105s 3 ndn.fw:OnData(0x9f5cae8, /dst1/4, 0x9f66aa0, 0x9f66e50)
+0.841105s 3 ndn.fw:OnData(): [DEBUG] ZhangYu 2013-8-30 inFaceNodeName: payload->GetSize:  Rtr2  1024
+ZhangYu2013-8-9-------------------------------------insert0x9f64fe0
+0.841105s 3 ndn.fw:SatisfyPendingInterest(): [DEBUG] Satisfy dev[3]=net(0,2-3)
+0.841321s 3 ndn.fw:OnData(0x9f5cb88, /dst2/4, 0x9f64e40, 0x9f67000)
+0.841321s 3 ndn.fw:OnData(): [DEBUG] ZhangYu 2013-8-30 inFaceNodeName: payload->GetSize:  Rtr2  1024
+ZhangYu2013-8-9-------------------------------------insert0x9f65d08
+0.841321s 3 ndn.fw:SatisfyPendingInterest(): [DEBUG] Satisfy dev[3]=net(0,2-3)
+0.859561s 2 ndn.fw:OnData(0x9f5c6c8, /dst1/4, 0x9f64e40, 0x9f67128)
+0.859561s 2 ndn.fw:OnData(): [DEBUG] ZhangYu 2013-8-30 inFaceNodeName: payload->GetSize:  Rtr1  1024
+ZhangYu2013-8-9-------------------------------------insert0x9f65b00
+0.859561s 2 ndn.fw:SatisfyPendingInterest(): [DEBUG] Satisfy dev[2]=net(0,0-2)
+0.868017s 2 ndn.fw:OnData(0x9f5c6c8, /dst2/4, 0x9f64e40, 0x9f66e50)
+0.868017s 2 ndn.fw:OnData(): [DEBUG] ZhangYu 2013-8-30 inFaceNodeName: payload->GetSize:  Rtr1  1024
+ZhangYu2013-8-9-------------------------------------insert0x9f629b8
+0.868017s 2 ndn.fw:SatisfyPendingInterest(): [DEBUG] Satisfy dev[2]=net(1,1-2)
+0.870406s 0 ndn.fw:OnData(0x9f5bd48, /dst1/4, 0x9f64e40, 0x9f66c40)
+0.870406s 0 ndn.fw:OnData(): [DEBUG] ZhangYu 2013-8-30 inFaceNodeName: payload->GetSize:  Src1  1024
+ZhangYu2013-8-9-------------------------------------insert0x9f57ef8
+0.870406s 0 ndn.fw:SatisfyPendingInterest(): [DEBUG] Satisfy dev=local(1)
+0.878862s 1 ndn.fw:OnData(0x9f5c290, /dst2/4, 0x9f66e50, 0x9f67128)
+0.878862s 1 ndn.fw:OnData(): [DEBUG] ZhangYu 2013-8-30 inFaceNodeName: payload->GetSize:  Src2  1024
+ZhangYu2013-8-9-------------------------------------insert0x9f5e2c0
+0.878862s 1 ndn.fw:SatisfyPendingInterest(): [DEBUG] Satisfy dev=local(1)

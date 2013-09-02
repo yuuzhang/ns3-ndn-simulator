@@ -126,13 +126,16 @@ AppFace::SendImpl (Ptr<Packet> p)
 
             NS_LOG_DEBUG("ZhangYu 2013-8-22 case ::CONTENT_OBJECT_NDNSIM: " << p->GetSize());
             NS_LOG_DEBUG("ZhangYu 2013-8-22 case ::CONTENT_OBJECT_NDNSIM: " << header->GetInstanceTypeId());
+
+            //\2013-8-22 调试代码，想要理解为什么会产生一个内容包，然后从p中删除
             header->SetName("testHead");
             /* 2013-8-22 如果没有上面的句子，下面执行中会报错，而不是编译时报错，是因为Name还没有被设置，是空的，所以获取的时候出错，
-             * 但是这样我就不能理解为什么生成一个空的ContentObject，名字没有设置，而可以从p中 remove
+             * 但是这样我就不能理解为什么生成一个空的ContentObject，名字没有设置，而可以从p中 remove，但是这里需要注意的是移除的是静态变量tail
              */
             int temp=p->RemoveHeader (*header);
             //temp=p->RemoveHeader (*header);
             NS_LOG_DEBUG("ZhangYu 2013-8-22 case ::CONTENT_OBJECT_NDNSIM: " << p <<"  header   " << header->GetName()<< "  " << temp);
+            // ---------/
 
             p->RemoveTrailer (tail);
             m_app->OnContentObject (header, p/*payload*/);

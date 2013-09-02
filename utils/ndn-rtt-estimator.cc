@@ -110,18 +110,18 @@ RttEstimator::GetCurrentEstimate (void) const
   return m_currentEstimatedRtt;
 }
 
-
+// 2013-8-25 ZhangYu 构造函数初始化列表，必须对任何const或引用类型成员以及没有默认构造函数的类类型的任何成员使用初始化式
 //RttHistory methods
 RttHistory::RttHistory (SequenceNumber32 s, uint32_t c, Time t)
   : seq (s), count (c), time (t), retx (false)
 {
-  NS_LOG_FUNCTION (this);
+  NS_LOG_FUNCTION (this << "ZhangYu 2013-8-24============1   seq (s): "<< s << "count (c): " << c << " time (t)" << t);
 }
 
 RttHistory::RttHistory (const RttHistory& h)
   : seq (h.seq), count (h.count), time (h.time), retx (h.retx)
 {
-  NS_LOG_FUNCTION (this);
+  NS_LOG_FUNCTION (this<< "ZhangYu 2013-8-24============2");
 }
 
 // Base class methods

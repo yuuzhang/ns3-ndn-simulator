@@ -98,6 +98,10 @@ Consumer::Consumer ()
   NS_LOG_FUNCTION_NOARGS ();
 
   m_rtt = CreateObject<RttMeanDeviation> ();
+  /* 下面的语句不能得到正确的NodeID，猜测是因为还没有执行到设置m_node。因为Consumer是App,初始化完后才装在Node上。所以在主程序ndn-congestion-topology中的获取
+   * consumer1->GetId() << std::endl;  consumerHelper.Install (consumer1);
+   */
+  NS_LOG_DEBUG("2013-8-24 ZhangYu" << " NodeID: "  << this->m_node);
 }
 
 void
@@ -210,7 +214,7 @@ Consumer::SendPacket ()
   //
   Ptr<Name> nameWithSequence = Create<Name> (m_interestName);
   (*nameWithSequence) (seq);
-  //
+  //参考ndn-name.cc，Name支持很灵活的元素添加，实现的是内容的分层命名，2013-8-24
 
   Interest interestHeader;
   interestHeader.SetNonce               (m_rand.GetValue ());
@@ -218,8 +222,6 @@ Consumer::SendPacket ()
   interestHeader.SetInterestLifetime    (m_interestLifeTime);
 
   NS_LOG_DEBUG("2013-8-21 ZhangYu nameWithSequence: "<<*nameWithSequence <<" " << interestHeader.GetName());
-  NS_LOG_DEBUG("2013-8-21 ZhangYu seq: " << seq);
-  NS_LOG_DEBUG("Requesting Interest: " << interestHeader);
   // NS_LOG_INFO ("Requesting Interest: \n" << interestHeader);
   //NS_LOG_INFO ("> Interest for " << seq);
 
