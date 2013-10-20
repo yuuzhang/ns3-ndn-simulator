@@ -24,6 +24,9 @@
 #include "ns3/network-module.h"
 #include "ns3/ndnSIM-module.h"
 
+//ZhangYu 2013-8-16  for ndn::CsTracer
+#include <ns3/ndnSIM/utils/tracers/ndn-cs-tracer.h>
+
 using namespace ns3;
 
 /**
@@ -129,6 +132,12 @@ main (int argc, char *argv[])
   ndn::StackHelper::AddRoute	("n2", "/data/p2", "p2", 1); // link to p2
   ndn::StackHelper::AddRoute	("n2", "/data/p3", "p3", 1); // link to p3
   ndn::StackHelper::AddRoute	("n2", "/data/p4", "p4", 1); // link to p4
+
+  //ZhangYu Add the trace
+
+  boost::tuple< boost::shared_ptr<std::ostream>, std::list<Ptr<ndn::CsTracer> > >
+  aggTracers = ndn::CsTracer::InstallAll ("cs-trace.txt", Seconds (1));
+
 
   // Schedule simulation time and run the simulation
   Simulator::Stop (Seconds (20.0));

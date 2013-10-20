@@ -75,7 +75,7 @@ struct lru_policy_traits
     	   *Effects: Transfers the value pointed by new_ele, from list x to this list, before the the element pointed by p.
     	   *No destructors or copy constructors are called. If p == new_ele or p == ++new_ele, this function is a null operation.
     	   */
-  		std::cout << "ZhangYu2013-8-9-------------------------------------update" << std::endl;
+  	//std::cout << "ZhangYu2013-8-9-------------------------------------update" << std::endl;
         // do relocation
         policy_container::splice (policy_container::end (),
                                   *this,
@@ -85,7 +85,7 @@ struct lru_policy_traits
       inline bool
       insert (typename parent_trie::iterator item)
       {
-  		std::cout << "ZhangYu2013-8-9-------------------------------------insert" << item->payload() << std::endl;
+  	//std::cout << "ZhangYu2013-8-9-------------------------------------insert" << item->payload() << std::endl;
 
         if (max_size_ != 0 && policy_container::size () >= max_size_)
           {
@@ -99,7 +99,7 @@ struct lru_policy_traits
       inline void
       lookup (typename parent_trie::iterator item)
       {
-		std::cout << "ZhangYu2013-8-9-------------------------------------lookup" << std::endl;
+	//std::cout << "ZhangYu2013-8-9-------------------------------------lookup" << std::endl;
         // do relocation
         policy_container::splice (policy_container::end (),
                                   *this,
@@ -109,7 +109,7 @@ struct lru_policy_traits
       inline void
       erase (typename parent_trie::iterator item)
       {
-		std::cout << "ZhangYu2013-8-9-------------------------------------erase" << std::endl;
+	//std::cout << "ZhangYu2013-8-9-------------------------------------erase" << std::endl;
         policy_container::erase (policy_container::s_iterator_to (*item));
       }
 

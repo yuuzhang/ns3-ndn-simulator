@@ -68,13 +68,12 @@ main (int argc, char *argv[])
 
   // Creating 3x3 topology
   PointToPointHelper p2p;
-  PointToPointGridHelper grid (3, 3, p2p);
+  PointToPointGridHelper grid (10, 10, p2p);
   grid.BoundingBox(100,100,200,200);
 
   // Install CCNx stack on all nodes
   ndn::StackHelper ccnxHelper;
   ccnxHelper.SetForwardingStrategy ("ns3::ndn::fw::SmartFlooding");
-  //ccnxHelper.SetForwardingStrategy ("ns3::ndn::fw::BestRoute");
   ccnxHelper.SetContentStore ("ns3::ndn::cs::Lru", "MaxSize", "10");
   ccnxHelper.InstallAll ();
 
@@ -84,9 +83,9 @@ main (int argc, char *argv[])
   ccnxGlobalRoutingHelper.InstallAll ();
 
   // Getting containers for the consumer/producer
-  Ptr<Node> producer = grid.GetNode (2, 2);
-  //NodeContainer producerNodes;
-  //producerNodes.Add (grid.GetNode(2,2));
+  //Ptr<Node> producer = grid.GetNode (2, 2);
+  NodeContainer producerNodes;
+  producerNodes.Add (grid.GetNode(9,9));
 
   NodeContainer consumerNodes;
   consumerNodes.Add (grid.GetNode (0,0));
@@ -99,8 +98,7 @@ main (int argc, char *argv[])
   consumerHelper.SetPrefix (prefix);
   consumerHelper.SetAttribute ("Frequency", StringValue ("100")); // 100 interests a second
   
-  //ZhangYu 2013-10-6 这是关系到hitCache的重要参数，在文章"Optimal Cache Allocation for  Content-Centric Networking" 中有讨论
-  //如果下面的NumberOfContents的值设置为10，那么在3x3的grid中，加上--vis可以看出表示流量的绿线很快就没了，现在还不能说出为什么， 2013-10-19
+  //ZhangYu 2013-10-6 这是关系到hitCache的重要参数，在文章中
   consumerHelper.SetAttribute ("NumberOfContents", StringValue ("100")); // 10 different contents
   //consumerHelper.SetAttribute ("Randomize", StringValue ("uniform")); // 100 interests a second
   consumerHelper.Install (consumerNodes);
@@ -108,10 +106,9 @@ main (int argc, char *argv[])
   ndn::AppHelper producerHelper ("ns3::ndn::Producer");
   producerHelper.SetPrefix (prefix);
   producerHelper.SetAttribute ("PayloadSize", StringValue("100"));
-  producerHelper.Install (producer);
-  ccnxGlobalRoutingHelper.AddOrigins (prefix, producer);
-  //producerHelper.Install (producerNodes);
-  //ccnxGlobalRoutingHelper.AddOrigins (prefix, producerNodes);
+  producerHelper.Install (producerNodes);
+  ccnxGlobalRoutingHelper.AddOrigins (prefix, producerNodes);
+
   // Calculate and install FIBs
   ccnxGlobalRoutingHelper.CalculateRoutes ();
 

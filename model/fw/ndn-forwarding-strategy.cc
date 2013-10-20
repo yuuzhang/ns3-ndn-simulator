@@ -231,7 +231,10 @@ ForwardingStrategy::OnData (Ptr<Face> inFace,
                             Ptr<const Packet> origPacket)
 {
   NS_LOG_FUNCTION (inFace << header->GetName () << payload << origPacket);
-  NS_LOG_DEBUG("ZhangYu 2013-8-30 inFaceNodeName: payload->GetSize:  " << Names::FindName(inFace->GetNode()) << "  " << payload->GetSize());
+  //std::ostream  &zytemp;
+  //zytemp << "adf";
+  //origPacket->EnablePrinting();
+  NS_LOG_DEBUG("ZhangYu 2013-8-30 inFaceNodeName: payload->GetSize:  " << Names::FindName(inFace->GetNode()) );
   m_inData (header, payload, inFace);
 
   // Lookup PIT entry
