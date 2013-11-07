@@ -197,15 +197,14 @@ GlobalRoutingHelper::AddOrigin (const std::string &prefix, Ptr<Node> node)
 void
 GlobalRoutingHelper::AddOrigins (const std::string &prefix, const NodeContainer &nodes)
 {
-	//下面的两句运行结果是 1，8，只给producer节点添加了 prefix
-	NS_LOG_DEBUG("ZhangYu2013-5-20, nodes.GetN :  " << nodes.GetN());
-	for (NodeContainer::Iterator node = nodes.Begin ();
+  //一般是在Main函数中调用  ccnxGlobalRoutingHelper.AddOrigins (prefix, producer) ，执行下面的两句运行结果是 1，8，只给producer节点添加了 prefix
+    for (NodeContainer::Iterator node = nodes.Begin ();
        node != nodes.End ();
        node++)
     {
 
       Ptr<GlobalRouter> gr = (*node)->GetObject<GlobalRouter> ();
-	  NS_LOG_DEBUG("ZhangYu 2013-5-20 Add Origins " << gr->GetId());
+      NS_LOG_DEBUG("ZhangYu 2013-5-20 Add Origins " << gr->GetId() << endl);
       AddOrigin (prefix, *node);
     }
 }
@@ -242,74 +241,70 @@ GlobalRoutingHelper::CalculateRoutes ()
    * See http://www.boost.org/doc/libs/1_49_0/libs/graph/doc/table_of_contents.html for more details
    */
 
-  BOOST_CONCEPT_ASSERT(( VertexListGraphConcept< NdnGlobalRouterGraph > ));
+  //BOOST_CONCEPT_ASSERT(( VertexListGraphConcept< NdnGlobalRouterGraph > ));
   BOOST_CONCEPT_ASSERT(( IncidenceGraphConcept< NdnGlobalRouterGraph > ));
 
   NdnGlobalRouterGraph graph;
   typedef graph_traits < NdnGlobalRouterGraph >::vertex_descriptor vertex_descriptor;
 
-  /*最初是放在后面的节点的for循环中的，搞的不能正常调试。在查看以节点0为源节点的其他节点的距离和父节点时，发现权重设置没起作用。因为比如节点2到节点3的权重设置
-   * 必须要程序运行到以节点2为源节点，节点3为源节点时才能修改节点2到3的双向链路，所以如果所有的节点权重都设置为7时，一直到最后一个节点循环后距离才能是7的倍数
-   */
   for (NodeList::Iterator node=NodeList::Begin();node!=NodeList::End();node++)
   {
-		Ptr<GlobalRouter> source = (*node)->GetObject<GlobalRouter> ();
-		if (source == 0)  //注意这里不是判断的节点0,不是source->GetId()==0
-		{
-		  NS_LOG_DEBUG ("Node " << (*node)->GetId () << " does not export GlobalRouter interface");
-		  continue;
-		}
-		/* ZhangYu 2013-5-10 in the file boost-graph-ndn-global..,define the following
-		* typedef ns3::ndn::GlobalRouter::Incidency edge_descriptor in relax.hpp
-		*/
-		ns3::ndn::GlobalRouter::IncidencyList edges;
-		ns3::ndn::GlobalRouter::Incidency edge;
+    //这部分代码添加是为了设置边的权重，跳过了前面的拓扑定义中或者其他地方关于metric的设置，只是为了直接简单，因为毕竟CaculateRoutes在整个仿真过程中之运行一次
+	Ptr<GlobalRouter> source = (*node)->GetObject<GlobalRouter> ();
+        if (source == 0)  //注意这里不是判断的节点0,不是source->GetId()==0
+          {
+            NS_LOG_DEBUG ("Node " << (*node)->GetId () << " does not export GlobalRouter interface");
+            continue;
+          }
+        /* ZhangYu 2013-5-10 in the file boost-graph-ndn-global..,define the following
+         * typedef ns3::ndn::GlobalRouter::Incidency edge_descriptor in relax.hpp
+         * 遍历当前节点的所有边，
+         */
+        ns3::ndn::GlobalRouter::IncidencyList edges;
+        ns3::ndn::GlobalRouter::Incidency edge;
+        edges=source->GetIncidencies();
+        //edge= edges.front();
 
-		edges=source->GetIncidencies();
-		//edge= edges.front();
+        typedef property_map<NdnGlobalRouterGraph, edge_weight_t>::type WeightMap;
+        typedef property_traits<WeightMap>::value_type W;
+        property_traits<EdgeWeights>::reference b;
 
-		typedef property_map<NdnGlobalRouterGraph, edge_weight_t>::type WeightMap;
-		typedef property_traits<WeightMap>::value_type W;
-		property_traits<EdgeWeights>::reference b;
+        const WeightMap& weightmap = get(edge_weight, graph);
 
-		const WeightMap& weightmap = get(edge_weight, graph);
+    BOOST_FOREACH(ns3::ndn::GlobalRouter::Incidency edge, edges)
+      {
+    	W w_e = get(weightmap, edge);
 
-		BOOST_FOREACH(ns3::ndn::GlobalRouter::Incidency edge, edges){
+    	//2013-11-7,通过下面的语句可以更改两个节点间的双向链路，从而控制后面的Dijkstra的计算结果，例如把3x3中的节点1和节点4之间的metric改为2，使得节点4的父节点从1变为3
+    	if((source->GetObject<Node>()->GetId()==1) && ((edge.get<2>())->GetObject<Node>()->GetId()==4))
+    	(edge.get<1>())->SetMetric(2);
+    	if((source->GetObject<Node>()->GetId()==4) && ((edge.get<2>())->GetObject<Node>()->GetId()==1))
+        (edge.get<1>())->SetMetric(2);
 
-		W w_e = get(weightmap, edge);
+        std::string fromNode, toNode;
+        fromNode=Names::FindName(source->GetObject<Node>());
+        toNode=Names::FindName((edge.get<2>())->GetObject<Node>());
+        if((fromNode=="Node1") && (toNode=="Node4"))
+          (edge.get<1>())->SetMetric(2);
+        if((fromNode=="Node4") && (toNode=="Node1"))
+          (edge.get<1>())->SetMetric(2);
+        //boost::get<1>(source->GetIncidencies().front())->SetMetric(2);
+        NS_LOG_DEBUG("ZhangYu 2013-10-24, fromNode: " << fromNode  << "  toNode: " << toNode << "  Metric: " << (edge.get<1>())->GetMetric());
 
-		//希望能准确地设置7到8之间的双向链路，才能迫使路由改变 2013-5-15
-		//Ptr<NetDevice> nd = (edge.get<1>())->GetNetDevice ();
+        w_e = get(weightmap, edge);
+        //NS_LOG_DEBUG("ZhangYu2013-5-15,  " <<source->GetId() << " " << *w_e.get<0>() << "metric:" <<  w_e.get<1>());
 
-//		if((source->GetId()==1) && ((edge.get<2>())->GetId()==2))
-//			(edge.get<1>())->SetMetric(7);
-//		if((source->GetId()==1) && ((edge.get<2>())->GetId()==1))
-//			(edge.get<1>())->SetMetric(7);
+        /*使用下面的语句进行赋值不报错，但是赋值完后，重新执行w_e=get(weightmap,edge）后，之前的值全部丢失，说明这种赋值语句并没有修改weightmap
+         * 本来不理解为啥metric是定义在Face中的，可以通过SetMetric来修改更改，然而在property_traits<WeightMap>::value_type中，
+         * 定义了Face, uint_16, double，当使用get(weightmap,edge)时，调用在boost-graph-ndn-global-routing-helper.h里的get函数，
+         * 返回了edge.get<1>()->GetMetric作为了value_type中的第2项
+         */
+        //w_e.get<1>()=15; w_e.get<2>()=25.0;
 
-		//if((*w_e.get<0>()) =="dev[8]=net(1,7-8)")
-		std::string fromNode, toNode;
-		fromNode=Names::FindName(source->GetObject<Node>());
-		toNode=Names::FindName((edge.get<2>())->GetObject<Node>());
-		if((fromNode=="Node4") && (toNode=="Node7"))
-			(edge.get<1>())->SetMetric(1);
-		if((fromNode=="Node7") && (toNode=="Node4"))
-			(edge.get<1>())->SetMetric(1);
-		//boost::get<1>(source->GetIncidencies().front())->SetMetric(2);
+        //NS_LOG_DEBUG("ZhangYu2013-5-9,  " << (boost::get<1>(edge))->GetMetric()<< "   " << boost::get<0>(w_e)<<"   " << boost::get<1>(w_e)<< "   " << boost::get<2>(w_e));
+        //NS_LOG_DEBUG("ZhangYu2013-5-9,  " << b.get<1>() << "   " << boost::get<0>(w_e)<<"   " << boost::get<1>(w_e)<< "   " << boost::get<2>(w_e));
 
-		w_e = get(weightmap, edge);
-		//NS_LOG_DEBUG("ZhangYu2013-5-15,  " <<source->GetId() << " " << *w_e.get<0>() << "metric:" <<  w_e.get<1>());
-
-		/*使用下面的语句进行赋值不报错，但是赋值完后，重新执行w_e-get(weightmap,edge）后，之前的值全部丢失，说明这种赋值语句并没有修改weightmap
-		* 本来不理解为啥metric是定义在Face中的，可以通过SetMetric来修改更改，然而在property_traits<WeightMap>::value_type中，
-		* 定义了Face, uint_16, double，当使用get(weightmap,edge)时，调用在boost-graph-ndn-global-routing-helper.h里的get函数，
-		* 返回了edge.get<1>()->GetMetric作为了value_type中的第2项
-		*/
-		//w_e.get<1>()=15; w_e.get<2>()=25.0;
-
-		//NS_LOG_DEBUG("ZhangYu2013-5-9,  " << (boost::get<1>(edge))->GetMetric()<< "   " << boost::get<0>(w_e)<<"   " << boost::get<1>(w_e)<< "   " << boost::get<2>(w_e));
-		//NS_LOG_DEBUG("ZhangYu2013-5-9,  " << b.get<1>() << "   " << boost::get<0>(w_e)<<"   " << boost::get<1>(w_e)<< "   " << boost::get<2>(w_e));
-
-		//NS_LOG_DEBUG("ZhangYu2013-5-1, distancesdfgh:asd  " << sizeof(weightmap) << sizeof(zyweightmap) << sizeof(graph));
+        //NS_LOG_DEBUG("ZhangYu2013-5-1, distancesdfgh:asd  " << sizeof(weightmap) << sizeof(zyweightmap) << sizeof(graph));
       }
   }
 
@@ -324,11 +319,7 @@ GlobalRoutingHelper::CalculateRoutes ()
 		  NS_LOG_DEBUG ("Node " << (*node)->GetId () << " does not export GlobalRouter interface");
 		  continue;
 		}
-
-
       DistancesMap    distances;
-
-
       //为了搞清楚这个函数，花费了很长时间。2013-5-10，在其中有多个同名函数模板的调用，最终会出现在函数dijkstra_bfs_visitor的relax中，
       /*graph_traits<Graph>::edge_descriptor e
        * put( DistanceMap& d, v=target(e,g), combine( get(d, u), get(property_traits<WeightMap>::value_type & w_e=get(w,e)
@@ -359,20 +350,21 @@ GlobalRoutingHelper::CalculateRoutes ()
       fib->InvalidateAll ();
       NS_ASSERT (fib != 0);
 
-      NS_LOG_DEBUG ("Reachability from Node: " << source->GetObject<Node> ()->GetId ()<<endl);
-    for(PredecessorsMap::iterator i=predecessors.begin();i!=predecessors.end();i++)
-    {
-    	//NS_LOG_DEBUG("ZhangYu 2013-5-21 predecessors node: " << i->first->GetId()<<"  ParentNode: " <<i->second->GetId());
-    	//NS_LOG_DEBUG("ZhangYu 2013-5-21 predecessors node: " << i->first->GetObject<Node>()->GetId() <<"  ParentNode: " <<i->second->GetObject<Node>()->GetId() );
-    	std::string fromNode, toNode;
-    	fromNode=Names::FindName(i->first->GetObject<Node>());
-    	toNode=Names::FindName(i->second->GetObject<Node>());
-    	NS_LOG_DEBUG("ZhangYu 2013-5-23 " << fromNode  << "(" << i->first->GetId() << ")  ParentNode: " <<toNode <<"(" <<i->second->GetId()<<")" );
+      NS_LOG_DEBUG (endl << "Reachability from Node: " << source->GetObject<Node> ()->GetId ()<<endl);
+      for(PredecessorsMap::iterator i=predecessors.begin();i!=predecessors.end();i++)
+        {
+          //NS_LOG_DEBUG("ZhangYu 2013-5-21 predecessors node: " << i->first->GetObject<Node>()->GetId() <<"  ParentNode: " <<i->second->GetObject<Node>()->GetId() );
+          std::string fromNode, toNode;
+          fromNode=Names::FindName(i->first->GetObject<Node>());
+          toNode=Names::FindName(i->second->GetObject<Node>());
+          /*下面的语句中，i->first得到的是GlobalRouter，如果GetId，得到是错误的节点Id，可以在拓扑定义txt文件中指定Node的systemId，然后就指定了节点的Id。但是
+           * 节点的Id不同于GlobalRouter的Id，所以导致节点3和5是互换的。要得到正确的节点Id，应该first后->GetObject<Node>()->GetId，如下面的语句
+           */
+          NS_LOG_DEBUG("ZhangYu 2013-5-23 " << fromNode  << "(" << i->first->GetObject<Node>()->GetId() << ")  ParentNode: " <<toNode <<"(" <<i->second->GetObject<Node>()->GetId()<<")" );
 
-    }
-	for (DistancesMap::iterator i = distances.begin (); i != distances.end (); i++)
+        }
+      for (DistancesMap::iterator i = distances.begin (); i != distances.end (); i++)
 	{
-	  //NS_LOG_DEBUG("ZhangYu 2013-5-19 DistancesMap i->first->GetId(): " <<i->first->GetId());
 	  if (i->first == source)
 	    continue;
 	  else
@@ -385,10 +377,9 @@ GlobalRoutingHelper::CalculateRoutes ()
 			}
 	      else
 			{
-	    	  //NS_LOG_DEBUG("ZhangYu 2013-5-19 test : ");
-	    	  NS_LOG_DEBUG("ZhangYu 2013-5-21, Node:" << i->first->GetId()<< "   face:" << *i->second.get<0>()<<"  with distance:" <<i->second.get<1>());
+	    	  NS_LOG_DEBUG("ZhangYu 2013-5-21, Node:" << i->first->GetObject<Node>()->GetId()<< "   face:" << *i->second.get<0>()<<"  with distance:" <<i->second.get<1>());
 
-                BOOST_FOREACH (const Ptr<const Name> &prefix, i->first->GetLocalPrefixes ())
+			  BOOST_FOREACH (const Ptr<const Name> &prefix, i->first->GetLocalPrefixes ())
 				{
 					NS_LOG_DEBUG (" prefix " << prefix << " reachable via face " << *i->second.get<0> ()
 								<< " with distance " << i->second.get<1> ()
@@ -438,7 +429,7 @@ GlobalRoutingHelper::CalculateRoutes ()
 //		//Ptr<Limits> fibLimits = entry->GetObject<Limits> ();
 //	}
 	//为了调试循环一次，看节点0计算后的记过，下面使用break打断后面的循环
-	//break;
+	break;
     }
 }
 
@@ -517,7 +508,7 @@ GlobalRoutingHelper::CalculateAllPossibleRoutes ()
 
           for(PredecessorsMap::iterator i=predecessors.begin();i!=predecessors.end();i++)
           {
-          	NS_LOG_DEBUG("ZhangYu 2013-5-21 predecessors node: " << i->first->GetId()<<"  ParentNode: " <<i->second->GetId());
+          	NS_LOG_DEBUG("ZhangYu 2013-5-21 predecessors node: " << i->first->GetObject<Node>()->GetId()  <<"  ParentNode: " <<i->second->GetObject<Node>()->GetId());
           }
           for (DistancesMap::iterator i = distances.begin ();
                i != distances.end ();

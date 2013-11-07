@@ -121,6 +121,7 @@ AnnotatedTopologyReader::CreateNode (const std::string name, double posX, double
   loc->SetPosition (Vector (posX, posY, 0));
 
   Names::Add (m_path, name, node);
+  //cout << "ZhangYu 2013-11-3 Node name: " << name << "   Id: " << node->GetId() << endl;
   m_nodes.Add (node);
 
   return node;
@@ -137,6 +138,11 @@ AnnotatedTopologyReader::GetLinks () const
 {
   return m_linksList;
 }
+
+  /**
+   *ZhangYu 2013-10-29
+   *这个函数的功能就是顺序地读取topo 定义文件里的内容，如果是碰到注释就continue跳过，当碰到关键字后就开始出处理
+   */
 
 NodeContainer
 AnnotatedTopologyReader::Read (void)
@@ -204,7 +210,7 @@ AnnotatedTopologyReader::Read (void)
     {
       string line;
       getline (topgen,line);
-      if (line == "") continue;
+      if (line == "") continue; //跳过空行
       if (line[0] == '#') continue; // comments
 
       // NS_LOG_DEBUG ("Input: [" << line << "]");

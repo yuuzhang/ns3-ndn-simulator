@@ -96,7 +96,7 @@ main (int argc, char *argv[])
   ndn::GlobalRoutingHelper::CalculateRoutes ();
   //ndn::GlobalRoutingHelper::CalculateAllPossibleRoutes();
 
-  Simulator::Stop (Seconds (20.0));
+  Simulator::Stop (Seconds (2.0));
 
   Simulator::Run ();
   Simulator::Destroy ();

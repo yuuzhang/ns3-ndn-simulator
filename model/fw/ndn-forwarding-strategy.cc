@@ -111,6 +111,7 @@ ForwardingStrategy::NotifyNewAggregate ()
   if (m_pit == 0)
     {
       m_pit = GetObject<Pit> ();
+      NS_LOG_DEBUG("ZhangYu 2013-10-21==========================================================" << m_pit->GetSize());
     }
   if (m_fib == 0)
     {
@@ -506,6 +507,8 @@ ForwardingStrategy::PropagateInterest (Ptr<Face> inFace,
   /// @todo Make lifetime per incoming interface
   pitEntry->UpdateLifetime (header->GetInterestLifetime ());
   NS_LOG_DEBUG("ZhangYu 2013-8-29 InterestLifetime: " << header->GetInterestLifetime());
+  NS_LOG_DEBUG("ZhangYu 2013-10-21====================================================================" << m_pit->GetSize());
+
   bool propagated = DoPropagateInterest (inFace, header, origPacket, pitEntry);
 
   if (!propagated && isRetransmitted) //give another chance if retransmitted

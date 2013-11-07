@@ -52,7 +52,6 @@ int
 main (int argc, char *argv[])
 {
   CommandLine cmd;
-  LogComponentEnable("ndn.CbisGlobalRoutingHelper", LOG_LEVEL_INFO);
   cmd.Parse (argc, argv);
 
   AnnotatedTopologyReader topologyReader ("", 25);
@@ -97,7 +96,7 @@ main (int argc, char *argv[])
   ndn::GlobalRoutingHelper::CalculateRoutes ();
   //ndn::GlobalRoutingHelper::CalculateAllPossibleRoutes();
 
-  Simulator::Stop (Seconds (20.0));
+  Simulator::Stop (Seconds (2.0));
 
   Simulator::Run ();
   Simulator::Destroy ();

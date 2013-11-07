@@ -101,7 +101,7 @@ main (int argc, char *argv[])
   
   //ZhangYu 2013-10-6 这是关系到hitCache的重要参数，在文章"Optimal Cache Allocation for  Content-Centric Networking" 中有讨论
   //如果下面的NumberOfContents的值设置为10，那么在3x3的grid中，加上--vis可以看出表示流量的绿线很快就没了，现在还不能说出为什么， 2013-10-19
-  consumerHelper.SetAttribute ("NumberOfContents", StringValue ("100")); // 10 different contents
+  consumerHelper.SetAttribute ("NumberOfContents", StringValue ("10")); // 10 different contents
   //consumerHelper.SetAttribute ("Randomize", StringValue ("uniform")); // 100 interests a second
   consumerHelper.Install (consumerNodes);
 
