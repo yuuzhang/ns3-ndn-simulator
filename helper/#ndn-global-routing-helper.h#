@@ -96,18 +96,6 @@ public:
   AddOriginsForAll ();
 
   /**
-   * @ZY added for modify the metric before CaclulateRoutes.  把以前的在CaculateRoutes中添加的代码挪出来成一个函数 2013-11-8
-   */
-  static void
-  ZYmodifyEdgeMetric();
-
-  /**
-   * @ZY, modify from CalculateAllPossibleRoutes.
-   */
-  static void
-  CalculateZYMultiPathRoutes ();
-
-  /**
    * @brief Calculate for every node shortest path trees and install routes to all prefix origins
    */
   static void

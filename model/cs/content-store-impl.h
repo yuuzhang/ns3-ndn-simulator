@@ -167,7 +167,6 @@ boost::tuple<Ptr<Packet>, Ptr<const ContentObject>, Ptr<const Packet> >
 ContentStoreImpl<Policy>::Lookup (Ptr<const Interest> interest)
 {
   NS_LOG_FUNCTION (this << interest->GetName ());
-  NS_LOG_FUNCTION ("ZhangYu 2013-8-13" );
 
   /// @todo Change to search with predicate
   typename super::const_iterator node = this->deepest_prefix_match (interest->GetName ());
