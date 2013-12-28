@@ -70,9 +70,12 @@ Flooding::DoPropagateInterest (Ptr<Face> inFace,
                                Ptr<const Packet> origPacket,
                                Ptr<pit::Entry> pitEntry)
 {
-  NS_LOG_FUNCTION (this);
+  //NS_LOG_FUNCTION (this);
 
   int propagatedCount = 0;
+
+  //NS_LOG_DEBUG("ZhangYu 2013-12-24 pitEntry->GetFibEntry");
+  NS_LOG_DEBUG("ZhangYu 2013-12-25 NodeId: " << this->GetObject<Node>()->GetId() << "   interest: " << header->GetName());
 
   BOOST_FOREACH (const fib::FaceMetric &metricFace, pitEntry->GetFibEntry ()->m_faces.get<fib::i_metric> ())
     {

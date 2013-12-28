@@ -18,6 +18,14 @@
  * Author: Alexander Afanasyev <alexander.afanasyev@ucla.edu>
  */
 
+//-----ZhangYu 2013-12-27 为了查看routing算法为Fib添加的条目而调试 添加的头文件
+#include "ns3/ndn-net-device-face.h"
+#include "ns3/ndn-l3-protocol.h"
+#include "ns3/point-to-point-net-device.h"
+#include "ns3/channel.h"
+#include "ns3/ndn-name.h"
+//---------
+
 #include "ndn-fib-impl.h"
 
 #include "ns3/ndn-face.h"
@@ -110,27 +118,42 @@ FibImpl::Add (const Ptr<const Name> &prefix, Ptr<Face> face, int32_t metric)
   std::pair< super::iterator, bool > result = super::insert (*prefix, 0);
   if (result.first != super::end ())
     {
-      if (result.second)
+      if (result.second)  //real insert
         {
           Ptr<EntryImpl> newEntry = Create<EntryImpl> (this, prefix);
           newEntry->SetTrie (result.first);
           result.first->set_payload (newEntry);
+    	  NS_LOG_DEBUG("ZhangYu 2013-12-25    Add   " << *prefix << "  Fib->GetSize: " << newEntry->GetFib()->GetSize());
         }
-  
+      //NS_LOG_DEBUG(result.first->payload()->GetFib()->GetTypeId() );
       super::modify (result.first,
                      ll::bind (&Entry::AddOrUpdateRoutingMetric, ll::_1, face, metric));
 
+      NS_LOG_DEBUG("ZhangYu 2013-12-25 face: " <<face->GetId() <<"  Node: " << face->GetNode()->GetId() <<"  metric: " << metric );
+      
+      /* ZhangYu 2013-12-27 为了检查MultiPath对Fib的修改，添加的语句
+       * 现在还不清楚为啥到了节点8的时候，face->GetObject<NetDeviceFace>()==0了，但是为了不中断程序执行，加了if判断
+       */
+      if(face->GetObject<NetDeviceFace>())
+      {
+      NS_LOG_DEBUG("ZhangYu 2013-12-25 face: " <<face->GetId() <<"  [" << face->GetObject<NetDeviceFace>()->GetNetDevice()->GetChannel()->GetDevice(0)->GetNode()->GetId()
+    		  <<"-" << face->GetObject<NetDeviceFace>()->GetNetDevice()->GetChannel()->GetDevice(1)->GetNode()->GetId() << "]");
+      }
       if (result.second)
         {
           // notify forwarding strategy about new FIB entry
           NS_ASSERT (this->GetObject<ForwardingStrategy> () != 0);
           this->GetObject<ForwardingStrategy> ()->DidAddFibEntry (result.first->payload ());
+
         }
-      
+
       return result.first->payload ();
     }
   else
+  {
+	  NS_LOG_DEBUG("ZhangYu 2013-12-23==========else ");
     return 0;
+  }
 }
 
 void
@@ -169,7 +192,7 @@ FibImpl::Remove (const Ptr<const Name> &prefix)
 void
 FibImpl::InvalidateAll ()
 {
-  NS_LOG_FUNCTION (this->GetObject<Node> ()->GetId ());
+  NS_LOG_FUNCTION ("ZhangYu 2013-12-25 NodeId: " << this->GetObject<Node> ()->GetId ());
 
   super::parent_trie::recursive_iterator item (super::getTrie ());
   super::parent_trie::recursive_iterator end (0);

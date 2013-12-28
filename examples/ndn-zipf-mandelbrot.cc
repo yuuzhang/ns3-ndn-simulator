@@ -56,85 +56,89 @@ using namespace ns3;
 int
 main (int argc, char *argv[])
 {
-  //LogComponentEnable("ndn.CbisGlobalRoutingHelper", LOG_LEVEL_INFO);
-  // Setting default parameters for PointToPoint links and channels
-  Config::SetDefault ("ns3::PointToPointNetDevice::DataRate", StringValue ("1Mbps"));
-  Config::SetDefault ("ns3::PointToPointChannel::Delay", StringValue ("1ms"));
-  Config::SetDefault ("ns3::DropTailQueue::MaxPackets", StringValue ("10"));
+    //LogComponentEnable("ndn.CbisGlobalRoutingHelper", LOG_LEVEL_INFO);
+    // Setting default parameters for PointToPoint links and channels
+    Config::SetDefault ("ns3::PointToPointNetDevice::DataRate", StringValue ("1Mbps"));
+    Config::SetDefault ("ns3::PointToPointChannel::Delay", StringValue ("1ms"));
+    Config::SetDefault ("ns3::DropTailQueue::MaxPackets", StringValue ("10"));
+    
+    // Read optional command-line parameters (e.g., enable visualizer with ./waf --run=<> --visualize
+    CommandLine cmd;
+    cmd.Parse (argc, argv);
+    
+    int aRowNodes;
+    aRowNodes=3;
+    
+    // Creating 3x3 topology
+    PointToPointHelper p2p;
+    PointToPointGridHelper grid (aRowNodes, aRowNodes, p2p);
+    grid.BoundingBox(100,100,200,200);
+    
+    // Install CCNx stack on all nodes
+    ndn::StackHelper ccnxHelper;
+    //ccnxHelper.SetForwardingStrategy ("ns3::ndn::fw::SmartFlooding");
+    ccnxHelper.SetForwardingStrategy ("ns3::ndn::fw::Flooding");
+    //ccnxHelper.SetForwardingStrategy ("ns3::ndn::fw::BestRoute");
+    ccnxHelper.SetContentStore ("ns3::ndn::cs::Lru", "MaxSize", "1");
+    ccnxHelper.InstallAll ();
+    
+    // Installing global routing interface on all nodes
+    //ndn::CbisGlobalRoutingHelper ccnxGlobalRoutingHelper;
+    ndn::GlobalRoutingHelper ccnxGlobalRoutingHelper;
+    ccnxGlobalRoutingHelper.InstallAll ();
 
-  // Read optional command-line parameters (e.g., enable visualizer with ./waf --run=<> --visualize
-  CommandLine cmd;
-  cmd.Parse (argc, argv);
+    // Getting containers for the consumer/producer
+    Ptr<Node> producer = grid.GetNode (aRowNodes-1, aRowNodes-1);
+    //NodeContainer producerNodes;
+    //producerNodes.Add (grid.GetNode(2,2));
 
-  // Creating 3x3 topology
-  PointToPointHelper p2p;
-  PointToPointGridHelper grid (9, 9, p2p);
-  grid.BoundingBox(100,100,200,200);
+    NodeContainer consumerNodes;
+    consumerNodes.Add (grid.GetNode (0,0));
 
-  // Install CCNx stack on all nodes
-  ndn::StackHelper ccnxHelper;
-  //ccnxHelper.SetForwardingStrategy ("ns3::ndn::fw::SmartFlooding");
-  ccnxHelper.SetForwardingStrategy ("ns3::ndn::fw::BestRoute");
-  ccnxHelper.SetContentStore ("ns3::ndn::cs::Lru", "MaxSize", "1");
-  ccnxHelper.InstallAll ();
+    // Install CCNx applications
+    std::string prefix = "/prefix";
 
-  // Installing global routing interface on all nodes
-  //ndn::CbisGlobalRoutingHelper ccnxGlobalRoutingHelper;
-  ndn::GlobalRoutingHelper ccnxGlobalRoutingHelper;
-  ccnxGlobalRoutingHelper.InstallAll ();
+    /**ZhangYu 2013-12-19
+     * Zipf定义了不同ContentObject的数量，使得请求的Content的ID可能存在于Cache中，而在Cbr中，consumer请求的每个content都不相同，HitCache永远为0
+    * 应该等效于没有Cache的情况，2013-12-19号下载的新的ndnSIM存放与ndnSIM-1目录中，在cs中有content-store-nocache.cc。可以仿真NoCache的情况
+    * 在这个版本中，没有nocache，我曾经修改过empty-policy.h来试图实现nocahe，想把cachesize设置为真正的0，而不是unlimite，但是需要改得较多，未完成放弃
+    * 但是如果使用consumerHelper中的 ConsumerCbr，那么就使得每个请求的ContentID都不同，等效于NoCache，似乎结果是一样的。
+    */
+    //ndn::AppHelper consumerHelper ("ns3::ndn::ConsumerZipfMandelbrot");
+    ndn::AppHelper consumerHelper ("ns3::ndn::ConsumerCbr");
 
-  // Getting containers for the consumer/producer
-  Ptr<Node> producer = grid.GetNode (8, 8);
-  //NodeContainer producerNodes;
-  //producerNodes.Add (grid.GetNode(2,2));
+    //ndn::AppHelper consumerHelper ("ns3::ndn::ConsumerCbr");
+    consumerHelper.SetPrefix (prefix);
+    consumerHelper.SetAttribute ("Frequency", StringValue ("1")); // 100 interests a second
 
-  NodeContainer consumerNodes;
-  consumerNodes.Add (grid.GetNode (0,0));
+    //ZhangYu 2013-10-6 这是关系到hitCache的重要参数，在文章"Optimal Cache Allocation for  Content-Centric Networking" 中有讨论
+    //如果下面的NumberOfContents的值设置为10，那么在3x3的grid中，加上--vis可以看出表示流量的绿线很快就没了，估计是每个节点都有了Cache，不需要流量了。
+    //consumerHelper.SetAttribute ("NumberOfContents", StringValue ("10")); // 10 different contents
+    //consumerHelper.SetAttribute ("Randomize", StringValue ("uniform")); // 100 interests a second
+    consumerHelper.Install (consumerNodes);
 
-  // Install CCNx applications
-  std::string prefix = "/prefix";
+    ndn::AppHelper producerHelper ("ns3::ndn::Producer");
+    producerHelper.SetPrefix (prefix);
+    producerHelper.SetAttribute ("PayloadSize", StringValue("100"));
+    producerHelper.Install (producer);
+    ccnxGlobalRoutingHelper.AddOrigins (prefix, producer);
+    //producerHelper.Install (producerNodes);
+    //ccnxGlobalRoutingHelper.AddOrigins (prefix, producerNodes);
+    // Calculate and install FIBs
+    //ccnxGlobalRoutingHelper.CalculateRoutes ();
+    //ndn::GlobalRoutingHelper::CalculateAllPossibleRoutes();
+    ndn::GlobalRoutingHelper::CalculateZYMultiPathRoutes();
 
-  /**ZhangYu 2013-12-19
-   * Zipf定义了不同ContentObject的数量，使得请求的Content的ID可能存在于Cache中，而在Cbr中，consumer请求的每个content都不相同，HitCache永远为0
-   * 应该等效于没有Cache的情况，2013-12-19号下载的新的ndnSIM存放与ndnSIM-1目录中，在cs中有content-store-nocache.cc。可以仿真NoCache的情况
-   * 在这个版本中，没有nocache，我曾经修改过empty-policy.h来试图实现nocahe，想把cachesize设置为真正的0，而不是unlimite，但是需要改得较多，未完成放弃
-   * 但是如果使用consumerHelper中的 ConsumerCbr，那么就使得每个请求的ContentID都不同，等效于NoCache，似乎结果是一样的。
-   */
-  //ndn::AppHelper consumerHelper ("ns3::ndn::ConsumerZipfMandelbrot");
-  ndn::AppHelper consumerHelper ("ns3::ndn::ConsumerCbr");
+    //ZhangYu Add the trace
 
-  //ndn::AppHelper consumerHelper ("ns3::ndn::ConsumerCbr");
-  consumerHelper.SetPrefix (prefix);
-  consumerHelper.SetAttribute ("Frequency", StringValue ("100")); // 100 interests a second
-  
-  //ZhangYu 2013-10-6 这是关系到hitCache的重要参数，在文章"Optimal Cache Allocation for  Content-Centric Networking" 中有讨论
-  //如果下面的NumberOfContents的值设置为10，那么在3x3的grid中，加上--vis可以看出表示流量的绿线很快就没了，估计是每个节点都有了Cache，不需要流量了。
-  //consumerHelper.SetAttribute ("NumberOfContents", StringValue ("10")); // 10 different contents
-  //consumerHelper.SetAttribute ("Randomize", StringValue ("uniform")); // 100 interests a second
-  consumerHelper.Install (consumerNodes);
-
-  ndn::AppHelper producerHelper ("ns3::ndn::Producer");
-  producerHelper.SetPrefix (prefix);
-  producerHelper.SetAttribute ("PayloadSize", StringValue("100"));
-  producerHelper.Install (producer);
-  ccnxGlobalRoutingHelper.AddOrigins (prefix, producer);
-  //producerHelper.Install (producerNodes);
-  //ccnxGlobalRoutingHelper.AddOrigins (prefix, producerNodes);
-  // Calculate and install FIBs
-  ccnxGlobalRoutingHelper.CalculateRoutes ();
-  ndn::GlobalRoutingHelper::CalculateAllPossibleRoutes();
-  //ndn::GlobalRoutingHelper::CalculateZYMultiPathRoutes();
-
-  //ZhangYu Add the trace
-
-   boost::tuple< boost::shared_ptr<std::ostream>, std::list<Ptr<ndn::CsTracer> > >
-   aggTracers = ndn::CsTracer::InstallAll ("cs-trace.txt", Seconds (10));
+    boost::tuple< boost::shared_ptr<std::ostream>, std::list<Ptr<ndn::CsTracer> > >
+    aggTracers = ndn::CsTracer::InstallAll ("cs-trace.txt", Seconds (1));
 
 
-  Simulator::Stop (Seconds (10.0));
+    Simulator::Stop (Seconds (2.0));
 
-  Simulator::Run ();
-  Simulator::Destroy ();
+    Simulator::Run ();
+    Simulator::Destroy ();
 
-  return 0;
+    return 0;
 }
