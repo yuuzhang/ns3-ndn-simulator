@@ -101,6 +101,18 @@ public:
   static void
   ZYmodifyEdgeMetric();
 
+  /*
+   * @ZY, back up originalMetric for all edges, using in CalculateNoCommLinkMultiPathRoutes
+   */
+  static void
+    BackupRestoreOriginalMetrics(const std::string &action);
+
+  /*
+   * @ZY, no common link multi-path algorithms
+   */
+  static void
+  CalculateNoCommLinkMultiPathRoutes();
+
   /**
    * @ZY, modify from CalculateAllPossibleRoutes.
    */

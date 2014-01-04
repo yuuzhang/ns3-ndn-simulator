@@ -17,6 +17,7 @@
  *
  * Author: Ilya Moiseenko <iliamo@cs.ucla.edu>
  */
+#include "ns3/core-module.h"
 
 #include "ndn-app-helper.h"
 #include "ns3/log.h"
@@ -42,6 +43,8 @@ void
 AppHelper::SetPrefix (const std::string &prefix)
 {
   m_factory.Set ("Prefix", StringValue(prefix));
+  //Main函数中的    consumerHelper.SetPrefix (prefix) 和    producerHelper.SetPrefix (prefix) 都会调用此函数
+  //NS_LOG_DEBUG("ZhangYu 2013-12-30 prefix: " << prefix);
 }
 
 void 
@@ -57,7 +60,14 @@ AppHelper::Install (Ptr<Node> node)
   Ptr<Application> app = InstallPriv (node);
   if (app != 0)
     apps.Add (app);
-  
+
+  NS_LOG_DEBUG("ZhangYu 2013-12-31 Node Id: " << node->GetId() << "  app: " << app->GetInstanceTypeId() << "  " << app->GetTypeId());
+  /*ZhangYu 2013-12-31 上面的语句得到的是 ns3::ndn::ConsumerCbr, ns3::Application   ns3::ndn::Producer ns3::Application，为了实现noComLinkMultiPath，要选择consumer节点才进行最短路径的计算
+   * 计算出来后一次为所有Path上的节点都添加Fib，这样可以省去为无关的节点也计算最短路，计算一次才为当前计算的节点添加Fib。
+   * 为了选择consumer节点，一种方式是在global-routing中(*node)->GetApplication(appId)->GetInstanceTypeId()判断节点的类型，根据字符串开头是consumer的，虽然可以考虑给Node再增加一个属性用来
+   * 区分是consumer，这样可以挑出是consumer的节点来进行计算。现有的路由计算中，对source缩小范围，只对属于consumer的source进行计算，所以设置一个属性，不考虑producer，也暂时不考虑一个节点装在了多个consumer的情况
+   * 但是增加一个node的属性，需要直接修改NS3代码中的node.cc，影响可能大，所以放弃，只是靠
+   */
   return apps;
 }
     

@@ -77,8 +77,8 @@ main (int argc, char *argv[])
     // Install CCNx stack on all nodes
     ndn::StackHelper ccnxHelper;
     //ccnxHelper.SetForwardingStrategy ("ns3::ndn::fw::SmartFlooding");
-    ccnxHelper.SetForwardingStrategy ("ns3::ndn::fw::Flooding");
-    //ccnxHelper.SetForwardingStrategy ("ns3::ndn::fw::BestRoute");
+    //ccnxHelper.SetForwardingStrategy ("ns3::ndn::fw::Flooding");
+    ccnxHelper.SetForwardingStrategy ("ns3::ndn::fw::BestRoute");
     ccnxHelper.SetContentStore ("ns3::ndn::cs::Lru", "MaxSize", "1");
     ccnxHelper.InstallAll ();
     
@@ -86,11 +86,6 @@ main (int argc, char *argv[])
     //ndn::CbisGlobalRoutingHelper ccnxGlobalRoutingHelper;
     ndn::GlobalRoutingHelper ccnxGlobalRoutingHelper;
     ccnxGlobalRoutingHelper.InstallAll ();
-
-    // Getting containers for the consumer/producer
-    Ptr<Node> producer = grid.GetNode (aRowNodes-1, aRowNodes-1);
-    //NodeContainer producerNodes;
-    //producerNodes.Add (grid.GetNode(2,2));
 
     NodeContainer consumerNodes;
     consumerNodes.Add (grid.GetNode (0,0));
@@ -104,30 +99,51 @@ main (int argc, char *argv[])
     * 在这个版本中，没有nocache，我曾经修改过empty-policy.h来试图实现nocahe，想把cachesize设置为真正的0，而不是unlimite，但是需要改得较多，未完成放弃
     * 但是如果使用consumerHelper中的 ConsumerCbr，那么就使得每个请求的ContentID都不同，等效于NoCache，似乎结果是一样的。
     */
+
     //ndn::AppHelper consumerHelper ("ns3::ndn::ConsumerZipfMandelbrot");
-    ndn::AppHelper consumerHelper ("ns3::ndn::ConsumerCbr");
-
-    //ndn::AppHelper consumerHelper ("ns3::ndn::ConsumerCbr");
-    consumerHelper.SetPrefix (prefix);
-    consumerHelper.SetAttribute ("Frequency", StringValue ("1")); // 100 interests a second
-
     //ZhangYu 2013-10-6 这是关系到hitCache的重要参数，在文章"Optimal Cache Allocation for  Content-Centric Networking" 中有讨论
     //如果下面的NumberOfContents的值设置为10，那么在3x3的grid中，加上--vis可以看出表示流量的绿线很快就没了，估计是每个节点都有了Cache，不需要流量了。
     //consumerHelper.SetAttribute ("NumberOfContents", StringValue ("10")); // 10 different contents
     //consumerHelper.SetAttribute ("Randomize", StringValue ("uniform")); // 100 interests a second
+
+    ndn::AppHelper consumerHelper ("ns3::ndn::ConsumerCbr");
+
+    consumerHelper.SetPrefix (prefix);
+    consumerHelper.SetAttribute ("Frequency", StringValue ("1")); // 100 interests a second
+
     consumerHelper.Install (consumerNodes);
 
+    //ZhangYu 2013-12-30, 添加多个consumer和producer
+    consumerHelper.SetPrefix("/prefixtwo");
+    consumerHelper.Install(grid.GetNode(0,1));
+
+
+    // Getting containers for the consumer/producer
+    //Ptr<Node> producer = grid.GetNode (aRowNodes-1, aRowNodes-1);
+    NodeContainer producerNodes;
+
+    producerNodes.Add (grid.GetNode(aRowNodes-1, aRowNodes-1));
+
     ndn::AppHelper producerHelper ("ns3::ndn::Producer");
+
+    //prefix="prefix for producer";
     producerHelper.SetPrefix (prefix);
     producerHelper.SetAttribute ("PayloadSize", StringValue("100"));
-    producerHelper.Install (producer);
-    ccnxGlobalRoutingHelper.AddOrigins (prefix, producer);
-    //producerHelper.Install (producerNodes);
-    //ccnxGlobalRoutingHelper.AddOrigins (prefix, producerNodes);
+    //producerHelper.Install (producer);
+    //ccnxGlobalRoutingHelper.AddOrigins (prefix, producer);
+    ccnxGlobalRoutingHelper.AddOrigins (prefix, producerNodes);
+    producerHelper.Install (producerNodes);
+    
+    //ZhangYu 2013-12-30, 添加多个consumer和producer
+    producerHelper.SetPrefix("/prefixtwo");
+    ccnxGlobalRoutingHelper.AddOrigins ("/prefixtwo", grid.GetNode(aRowNodes-1, aRowNodes-1));
+    producerHelper.Install(grid.GetNode(aRowNodes-1, aRowNodes-1));
+
     // Calculate and install FIBs
     //ccnxGlobalRoutingHelper.CalculateRoutes ();
     //ndn::GlobalRoutingHelper::CalculateAllPossibleRoutes();
-    ndn::GlobalRoutingHelper::CalculateZYMultiPathRoutes();
+    //ndn::GlobalRoutingHelper::CalculateZYMultiPathRoutes();
+    ndn::GlobalRoutingHelper::CalculateNoCommLinkMultiPathRoutes();
 
     //ZhangYu Add the trace
 

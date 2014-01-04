@@ -192,7 +192,7 @@ FibImpl::Remove (const Ptr<const Name> &prefix)
 void
 FibImpl::InvalidateAll ()
 {
-  NS_LOG_FUNCTION ("ZhangYu 2013-12-25 NodeId: " << this->GetObject<Node> ()->GetId ());
+  //NS_LOG_FUNCTION ("ZhangYu 2013-12-25 NodeId: " << this->GetObject<Node> ()->GetId ());
 
   super::parent_trie::recursive_iterator item (super::getTrie ());
   super::parent_trie::recursive_iterator end (0);
