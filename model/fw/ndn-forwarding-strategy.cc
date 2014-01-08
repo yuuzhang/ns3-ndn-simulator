@@ -148,11 +148,23 @@ ForwardingStrategy::OnInterest (Ptr<Face> inFace,
     {
       similarInterest = false;
       pitEntry = m_pit->Create (header);
+
+      //ZhangYu 2013-1-7 发现使用BestRoute和我自己的多路径，Create pitEntry就不一样。
+      NS_LOG_DEBUG("ZhangYu 2014-1-7=================2====== " << *pitEntry->GetFibEntry() << std::endl );
+      BOOST_FOREACH (const fib::FaceMetric &metricFace, pitEntry->GetFibEntry ()->m_faces.get<fib::i_metric> ())
+        {
+          NS_LOG_DEBUG ("Trying " << boost::cref(metricFace));
+          NS_LOG_DEBUG("ZhangYu 2014-1-7========================== " << pitEntry->GetPrefix() );
+         // if (metricFace.GetStatus () == fib::FaceMetric::NDN_FIB_RED) // all non-read faces are in front
+          //  break;
+        }
+
+
       if (pitEntry != 0)
         {
           DidCreatePitEntry (inFace, header, origPacket, pitEntry);
           NS_LOG_DEBUG("ZhangYu 2013-8-30 inFace, header, origPacket, pitEntry "
-        	  << Names::FindName(inFace->GetNode()) << " " << header->GetName() << " " << origPacket->GetSize() << " " << pitEntry );
+        	  << Names::FindName(inFace->GetNode()) << " " << header->GetName() << " " << origPacket->GetSize() << " " << *pitEntry );
         }
       else
         {

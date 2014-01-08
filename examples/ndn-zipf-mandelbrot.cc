@@ -77,8 +77,8 @@ main (int argc, char *argv[])
     // Install CCNx stack on all nodes
     ndn::StackHelper ccnxHelper;
     //ccnxHelper.SetForwardingStrategy ("ns3::ndn::fw::SmartFlooding");
-    //ccnxHelper.SetForwardingStrategy ("ns3::ndn::fw::Flooding");
-    ccnxHelper.SetForwardingStrategy ("ns3::ndn::fw::BestRoute");
+    ccnxHelper.SetForwardingStrategy ("ns3::ndn::fw::Flooding");
+    //ccnxHelper.SetForwardingStrategy ("ns3::ndn::fw::BestRoute");
     ccnxHelper.SetContentStore ("ns3::ndn::cs::Lru", "MaxSize", "1");
     ccnxHelper.InstallAll ();
     
@@ -88,7 +88,11 @@ main (int argc, char *argv[])
     ccnxGlobalRoutingHelper.InstallAll ();
 
     NodeContainer consumerNodes;
-    consumerNodes.Add (grid.GetNode (0,0));
+    //consumerNodes.Add(grid.GetNode(2,0));
+    consumerNodes.Add (grid.GetNode (0,2));
+    //consumerNodes.Add (grid.GetNode (1,0));
+    //consumerNodes.Add (grid.GetNode (1,2));
+
 
     // Install CCNx applications
     std::string prefix = "/prefix";
@@ -115,7 +119,7 @@ main (int argc, char *argv[])
 
     //ZhangYu 2013-12-30, 添加多个consumer和producer
     consumerHelper.SetPrefix("/prefixtwo");
-    consumerHelper.Install(grid.GetNode(0,1));
+    consumerHelper.Install(grid.GetNode(2,0));
 
 
     // Getting containers for the consumer/producer
@@ -123,6 +127,8 @@ main (int argc, char *argv[])
     NodeContainer producerNodes;
 
     producerNodes.Add (grid.GetNode(aRowNodes-1, aRowNodes-1));
+    //producerNodes.Add (grid.GetNode(aRowNodes-1, aRowNodes-2));
+
 
     ndn::AppHelper producerHelper ("ns3::ndn::Producer");
 
@@ -136,8 +142,9 @@ main (int argc, char *argv[])
     
     //ZhangYu 2013-12-30, 添加多个consumer和producer
     producerHelper.SetPrefix("/prefixtwo");
-    ccnxGlobalRoutingHelper.AddOrigins ("/prefixtwo", grid.GetNode(aRowNodes-1, aRowNodes-1));
-    producerHelper.Install(grid.GetNode(aRowNodes-1, aRowNodes-1));
+    producerHelper.SetAttribute ("PayloadSize", StringValue("500"));
+    ccnxGlobalRoutingHelper.AddOrigins ("/prefixtwo", grid.GetNode(aRowNodes-1, aRowNodes-2));
+    producerHelper.Install(grid.GetNode(aRowNodes-1, aRowNodes-2));
 
     // Calculate and install FIBs
     //ccnxGlobalRoutingHelper.CalculateRoutes ();

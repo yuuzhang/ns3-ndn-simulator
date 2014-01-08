@@ -132,6 +132,7 @@ Entry::AddOrUpdateRoutingMetric (Ptr<Face> face, int32_t metric)
   m_faces.get<i_nth> ().rearrange (m_faces.get<i_metric> ().begin ());
 }
 
+//ZhangYu 2014-1-7 refer to the paper: a case for stateful forwarding plane.pdf
 void
 Entry::SetRealDelayToProducer (Ptr<Face> face, Time delay)
 {
@@ -144,6 +145,7 @@ Entry::SetRealDelayToProducer (Ptr<Face> face, Time delay)
       m_faces.modify (record,
                       ll::bind (&FaceMetric::SetRealDelay, ll::_1, delay));
     }
+  //NS_LOG_DEBUG("ZhangYu 2014-1-7 delay: " << delay << record->GetRealDelay() <<" " << record->GetRoutingCost() << " " << record));
 }
 
 

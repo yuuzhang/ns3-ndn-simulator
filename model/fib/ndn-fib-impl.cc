@@ -112,7 +112,7 @@ FibImpl::Add (const Name &prefix, Ptr<Face> face, int32_t metric)
 Ptr<Entry>
 FibImpl::Add (const Ptr<const Name> &prefix, Ptr<Face> face, int32_t metric)
 {
-  NS_LOG_FUNCTION (this->GetObject<Node> ()->GetId () << boost::cref(*prefix) << boost::cref(*face) << metric);
+  NS_LOG_FUNCTION ( this->GetObject<Node> ()->GetId () << boost::cref(*prefix) << boost::cref(*face) << metric);
 
   // will add entry if doesn't exists, or just return an iterator to the existing entry
   std::pair< super::iterator, bool > result = super::insert (*prefix, 0);
@@ -123,22 +123,26 @@ FibImpl::Add (const Ptr<const Name> &prefix, Ptr<Face> face, int32_t metric)
           Ptr<EntryImpl> newEntry = Create<EntryImpl> (this, prefix);
           newEntry->SetTrie (result.first);
           result.first->set_payload (newEntry);
-    	  NS_LOG_DEBUG("ZhangYu 2013-12-25    Add   " << *prefix << "  Fib->GetSize: " << newEntry->GetFib()->GetSize());
+    	  //NS_LOG_DEBUG("ZhangYu 2013-12-25    Add   " << *prefix << "  Fib->GetSize: " << newEntry->GetFib()->GetSize());
         }
       //NS_LOG_DEBUG(result.first->payload()->GetFib()->GetTypeId() );
       super::modify (result.first,
                      ll::bind (&Entry::AddOrUpdateRoutingMetric, ll::_1, face, metric));
-
-      NS_LOG_DEBUG("ZhangYu 2013-12-25 face: " <<face->GetId() <<"  Node: " << face->GetNode()->GetId() <<"  metric: " << metric );
       
       /* ZhangYu 2013-12-27 为了检查MultiPath对Fib的修改，添加的语句
        * 现在还不清楚为啥到了节点8的时候，face->GetObject<NetDeviceFace>()==0了，但是为了不中断程序执行，加了if判断
        */
+      /*NS_LOG_DEBUG("ZhangYu 2013-12-25 face: " <<face->GetId() <<"  Node: " << face->GetNode()->GetId() <<"  metric: " << metric );
       if(face->GetObject<NetDeviceFace>())
       {
       NS_LOG_DEBUG("ZhangYu 2013-12-25 face: " <<face->GetId() <<"  [" << face->GetObject<NetDeviceFace>()->GetNetDevice()->GetChannel()->GetDevice(0)->GetNode()->GetId()
     		  <<"-" << face->GetObject<NetDeviceFace>()->GetNetDevice()->GetChannel()->GetDevice(1)->GetNode()->GetId() << "]");
       }
+      else
+        {
+          NS_LOG_DEBUG("ZhangYu 2014-1-6 face: "<< *face);
+        }*/
+
       if (result.second)
         {
           // notify forwarding strategy about new FIB entry
