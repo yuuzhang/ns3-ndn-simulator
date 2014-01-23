@@ -331,6 +331,7 @@ Consumer::OnTimeout (uint32_t sequenceNumber)
 void
 Consumer::WillSendOutInterest (uint32_t sequenceNumber)
 {
+
   NS_LOG_DEBUG ("Trying to add " << sequenceNumber << " with " << Simulator::Now () << ". already " << m_seqTimeouts.size () << " items");
 
   m_seqTimeouts.insert (SeqTimeout (sequenceNumber, Simulator::Now ()));

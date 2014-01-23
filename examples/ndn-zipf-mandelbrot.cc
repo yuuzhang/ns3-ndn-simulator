@@ -26,6 +26,12 @@
 
 //ZhangYu 2013-8-16  for ndn::CsTracer
 #include <ns3/ndnSIM/utils/tracers/ndn-cs-tracer.h>
+// for ndn::L3AggregateTracer
+#include <ns3/ndnSIM/utils/tracers/ndn-l3-aggregate-tracer.h>
+
+// for ndn::L3RateTracer
+#include <ns3/ndnSIM/utils/tracers/ndn-l3-rate-tracer.h>
+
 
 using namespace ns3;
 
@@ -77,8 +83,8 @@ main (int argc, char *argv[])
     // Install CCNx stack on all nodes
     ndn::StackHelper ccnxHelper;
     //ccnxHelper.SetForwardingStrategy ("ns3::ndn::fw::SmartFlooding");
-    ccnxHelper.SetForwardingStrategy ("ns3::ndn::fw::Flooding");
-    //ccnxHelper.SetForwardingStrategy ("ns3::ndn::fw::BestRoute");
+    //ccnxHelper.SetForwardingStrategy ("ns3::ndn::fw::Flooding");
+    ccnxHelper.SetForwardingStrategy ("ns3::ndn::fw::BestRoute");
     ccnxHelper.SetContentStore ("ns3::ndn::cs::Lru", "MaxSize", "1");
     ccnxHelper.InstallAll ();
     
@@ -126,7 +132,7 @@ main (int argc, char *argv[])
     //Ptr<Node> producer = grid.GetNode (aRowNodes-1, aRowNodes-1);
     NodeContainer producerNodes;
 
-    producerNodes.Add (grid.GetNode(aRowNodes-1, aRowNodes-1));
+    producerNodes.Add (grid.GetNode(aRowNodes-2, aRowNodes-1));
     //producerNodes.Add (grid.GetNode(aRowNodes-1, aRowNodes-2));
 
 
@@ -142,7 +148,7 @@ main (int argc, char *argv[])
     
     //ZhangYu 2013-12-30, 添加多个consumer和producer
     producerHelper.SetPrefix("/prefixtwo");
-    producerHelper.SetAttribute ("PayloadSize", StringValue("500"));
+    producerHelper.SetAttribute ("PayloadSize", StringValue("100"));
     ccnxGlobalRoutingHelper.AddOrigins ("/prefixtwo", grid.GetNode(aRowNodes-1, aRowNodes-2));
     producerHelper.Install(grid.GetNode(aRowNodes-1, aRowNodes-2));
 
@@ -155,10 +161,15 @@ main (int argc, char *argv[])
     //ZhangYu Add the trace
 
     boost::tuple< boost::shared_ptr<std::ostream>, std::list<Ptr<ndn::CsTracer> > >
-    aggTracers = ndn::CsTracer::InstallAll ("cs-trace.txt", Seconds (1));
+    csTracers = ndn::CsTracer::InstallAll ("cs-trace.txt", Seconds (1));
 
 
-    Simulator::Stop (Seconds (2.0));
+    Simulator::Stop (Seconds (2000.0));
+
+    boost::tuple< boost::shared_ptr<std::ostream>, std::list<Ptr<ndn::L3AggregateTracer> > >  aggTracers = ndn::L3AggregateTracer::InstallAll ("aggregate-trace.txt", Seconds (0.5));
+
+    boost::tuple< boost::shared_ptr<std::ostream>, std::list<Ptr<ndn::L3RateTracer> > >
+      rateTracers = ndn::L3RateTracer::InstallAll ("rate-trace.txt", Seconds (0.5));
 
     Simulator::Run ();
     Simulator::Destroy ();

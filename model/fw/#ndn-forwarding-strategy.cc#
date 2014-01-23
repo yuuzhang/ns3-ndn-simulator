@@ -111,6 +111,7 @@ ForwardingStrategy::NotifyNewAggregate ()
   if (m_pit == 0)
     {
       m_pit = GetObject<Pit> ();
+      NS_LOG_DEBUG("ZhangYu 2013-10-21==========================================================" << m_pit->GetSize());
     }
   if (m_fib == 0)
     {
@@ -147,11 +148,21 @@ ForwardingStrategy::OnInterest (Ptr<Face> inFace,
     {
       similarInterest = false;
       pitEntry = m_pit->Create (header);
+
+      //ZhangYu 2013-1-7 调试多路径Create pitEntry后的
+      NS_LOG_DEBUG("ZhangYu 2014-1-7=================2====== " << *pitEntry->GetFibEntry() << std::endl );
+      BOOST_FOREACH (const fib::FaceMetric &metricFace, pitEntry->GetFibEntry ()->m_faces.get<fib::i_metric> ())
+        {
+          NS_LOG_DEBUG ("Trying " << boost::cref(metricFace));
+          NS_LOG_DEBUG("ZhangYu 2014-1-7========================== " << pitEntry->GetPrefix() );
+         // if (metricFace.GetStatus () == fib::FaceMetric::NDN_FIB_RED) // all non-read faces are in front
+          //  break;
+        }
       if (pitEntry != 0)
         {
           DidCreatePitEntry (inFace, header, origPacket, pitEntry);
           NS_LOG_DEBUG("ZhangYu 2013-8-30 inFace, header, origPacket, pitEntry "
-        	  << Names::FindName(inFace->GetNode()) << " " << header->GetName() << " " << origPacket->GetSize() << " " << pitEntry );
+        	  << Names::FindName(inFace->GetNode()) << " " << header->GetName() << " " << origPacket->GetSize() << " " << *pitEntry );
         }
       else
         {
@@ -506,6 +517,8 @@ ForwardingStrategy::PropagateInterest (Ptr<Face> inFace,
   /// @todo Make lifetime per incoming interface
   pitEntry->UpdateLifetime (header->GetInterestLifetime ());
   NS_LOG_DEBUG("ZhangYu 2013-8-29 InterestLifetime: " << header->GetInterestLifetime());
+  NS_LOG_DEBUG("ZhangYu 2013-10-21====================================================================" << m_pit->GetSize());
+
   bool propagated = DoPropagateInterest (inFace, header, origPacket, pitEntry);
 
   if (!propagated && isRetransmitted) //give another chance if retransmitted
@@ -588,7 +601,7 @@ ForwardingStrategy::TrySendOutInterest (Ptr<Face> inFace,
 
   DidSendOutInterest (inFace, outFace, header, origPacket, pitEntry);
 
- return true;
+  return true;
 }
 
 void

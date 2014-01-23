@@ -351,9 +351,6 @@ PitImpl<Policy>::Create (Ptr<const Interest> header)
   if (fibEntry == 0)
     return 0;
 
-  std::cout << "ZhangYu 2014-1-7=================1====fibEntry== " << *fibEntry << "\n" ;
-
-
   // NS_ASSERT_MSG (fibEntry != 0,
   //                "There should be at least default route set" <<
   //                " Prefix = "<< header->GetName() << ", NodeID == " << m_fib->GetObject<Node>()->GetId() << "\n" << *m_fib);
@@ -361,7 +358,7 @@ PitImpl<Policy>::Create (Ptr<const Interest> header)
   Ptr< entry > newEntry = ns3::Create< entry > (boost::ref (*this), header, fibEntry);
 
   //ZhangYu 2013-1-7 发现使用BestRoute和我自己的多路径，Create pitEntry就不一样。
-  std::cout << "ZhangYu 2014-1-7=================1====== " << *newEntry->GetFibEntry() << "\n" ;
+  //std::cout << "ZhangYu 2014-1-7=================1====== " << *newEntry->GetFibEntry() << "\n" ;
  /* BOOST_FOREACH (const fib::FaceMetric &metricFace, pitEntry->GetFibEntry ()->m_faces.get<fib::i_metric> ())
     {
       NS_LOG_DEBUG ("Trying " << boost::cref(metricFace));
