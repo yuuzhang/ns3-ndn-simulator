@@ -107,6 +107,14 @@ public:
   static void
     BackupRestoreOriginalMetrics(const std::string &action);
 
+
+  /*
+   * @ZY, no common link multi-path algorithms, for dynamic routing
+   * 在每次发interest之前生成一条路由表，发完后销毁，不需要Cache，
+   */
+  static void
+  CalculateNoCommLinkMultiPathRoutes(Ptr<Node> srcNode, Ptr<Node> desNode);
+
   /*
    * @ZY, no common link multi-path algorithms
    */
