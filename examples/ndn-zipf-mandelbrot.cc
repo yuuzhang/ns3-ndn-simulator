@@ -169,7 +169,7 @@ main (int argc, char *argv[])
     boost::tuple< boost::shared_ptr<std::ostream>, std::list<Ptr<ndn::L3AggregateTracer> > >  aggTracers = ndn::L3AggregateTracer::InstallAll ("aggregate-trace.txt", Seconds (0.5));
 
     boost::tuple< boost::shared_ptr<std::ostream>, std::list<Ptr<ndn::L3RateTracer> > >
-      rateTracers = ndn::L3RateTracer::InstallAll ("rate-trace.txt", Seconds (0.5));
+      rateTracers = ndn::L3RateTracer::InstallAll ("rate-trace.txt", Seconds (10));
 
     Simulator::Run ();
     Simulator::Destroy ();
