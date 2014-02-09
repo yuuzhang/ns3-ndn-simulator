@@ -82,7 +82,10 @@ FibImpl::DoDispose (void)
 Ptr<Entry>
 FibImpl::LongestPrefixMatch (const Interest &interest)
 {
-  super::iterator item = super::longest_prefix_match (interest.GetName ());
+	NS_LOG_DEBUG("ZhangYu 2014-2-5 =====================PM:3:07====== " << interest.GetName());
+
+	super::iterator item = super::longest_prefix_match (interest.GetName ());
+	//super::iterator item = super::find_exact(interest.GetName ());
   // @todo use predicate to search with exclude filters
 
   if (item == super::end ())
@@ -132,7 +135,7 @@ FibImpl::Add (const Ptr<const Name> &prefix, Ptr<Face> face, int32_t metric)
       /* ZhangYu 2013-12-27 为了检查MultiPath对Fib的修改，添加的语句
        * 现在还不清楚为啥到了节点8的时候，face->GetObject<NetDeviceFace>()==0了，但是为了不中断程序执行，加了if判断
        */
-      /*NS_LOG_DEBUG("ZhangYu 2013-12-25 face: " <<face->GetId() <<"  Node: " << face->GetNode()->GetId() <<"  metric: " << metric );
+      /**/NS_LOG_DEBUG("ZhangYu 2013-12-25 face: " <<face->GetId() <<"  Node: " << face->GetNode()->GetId() <<"  metric: " << metric );
       if(face->GetObject<NetDeviceFace>())
       {
       NS_LOG_DEBUG("ZhangYu 2013-12-25 face: " <<face->GetId() <<"  [" << face->GetObject<NetDeviceFace>()->GetNetDevice()->GetChannel()->GetDevice(0)->GetNode()->GetId()
@@ -141,7 +144,7 @@ FibImpl::Add (const Ptr<const Name> &prefix, Ptr<Face> face, int32_t metric)
       else
         {
           NS_LOG_DEBUG("ZhangYu 2014-1-6 face: "<< *face);
-        }*/
+        }
 
       if (result.second)
         {
@@ -159,6 +162,13 @@ FibImpl::Add (const Ptr<const Name> &prefix, Ptr<Face> face, int32_t metric)
     return 0;
   }
 }
+
+/*
+ * ZhangYu 2014-2-8
+ */
+
+
+
 
 void
 FibImpl::Remove (const Ptr<const Name> &prefix)

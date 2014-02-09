@@ -17,6 +17,10 @@
  *
  * Author: Ilya Moiseenko <iliamo@cs.ucla.edu>
  */
+//ZhangYu 2014-2-6 为添加DynamicRouting添加的
+#include "ns3/ndn-global-routing-helper.h"
+#include "ns3/node-list.h"
+// --ZhangYu
 
 #include "ndn-consumer.h"
 #include "ns3/ptr.h"
@@ -161,6 +165,11 @@ Consumer::StartApplication () // Called at time specified by Start
   App::StartApplication ();
 
   ScheduleNextPacket ();
+
+  Ptr<Name> nameWithSequence = Create<Name> (m_interestName);
+
+  //ndn::GlobalRoutingHelper::CalculateNoCommLinkMultiPathRoutes(NodeList::GetNode(6),NodeList::GetNode(7),nameWithSequence);
+
 }
 
 void
@@ -228,6 +237,11 @@ Consumer::SendPacket ()
   Ptr<Packet> packet = Create<Packet> ();
   packet->AddHeader (interestHeader);
   NS_LOG_DEBUG ("Interest packet size: " << packet->GetSize ());
+
+  //ZhangYu 2014-2-6 为每个数据包动态计算路由，在产生了一个interest后，发送前为这个包计算路由
+  //ndn::GlobalRoutingHelper::CalculateNoCommLinkMultiPathRoutes(this->m_node,NodeList::GetNode(5),nameWithSequence);
+
+
 
   WillSendOutInterest (seq);  
 

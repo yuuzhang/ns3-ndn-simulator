@@ -31,6 +31,17 @@
 
 // for ndn::L3RateTracer
 #include <ns3/ndnSIM/utils/tracers/ndn-l3-rate-tracer.h>
+//ZhangYu 2014-2-7 for DynamicRouting，否则不认识Name，试了很多.h才知道要包含ndn-interest.h
+#include "ns3/names.h"
+#include "ns3/ndn-name.h"
+#include "string.h"
+#include "ns3/ndn-interest.h"
+#include "ns3/ptr.h"
+#include <boost/ref.hpp>
+#include <boost/lexical_cast.hpp>
+#include <boost/lambda/lambda.hpp>
+#include <boost/lambda/bind.hpp>
+//---ZhangYu
 
 
 using namespace ns3;
@@ -124,7 +135,7 @@ main (int argc, char *argv[])
     consumerHelper.Install (consumerNodes);
 
     //ZhangYu 2013-12-30, 添加多个consumer和producer
-    consumerHelper.SetPrefix("/prefixtwo");
+    consumerHelper.SetPrefix("/prefix");
     consumerHelper.Install(grid.GetNode(2,0));
 
 
@@ -149,14 +160,15 @@ main (int argc, char *argv[])
     //ZhangYu 2013-12-30, 添加多个consumer和producer
     producerHelper.SetPrefix("/prefixtwo");
     producerHelper.SetAttribute ("PayloadSize", StringValue("100"));
-    ccnxGlobalRoutingHelper.AddOrigins ("/prefixtwo", grid.GetNode(aRowNodes-1, aRowNodes-2));
-    producerHelper.Install(grid.GetNode(aRowNodes-1, aRowNodes-2));
+    //ccnxGlobalRoutingHelper.AddOrigins ("/prefixtwo", grid.GetNode(aRowNodes-1, aRowNodes-2));
+    //producerHelper.Install(grid.GetNode(aRowNodes-1, aRowNodes-2));
 
     // Calculate and install FIBs
     //ccnxGlobalRoutingHelper.CalculateRoutes ();
     //ndn::GlobalRoutingHelper::CalculateAllPossibleRoutes();
     //ndn::GlobalRoutingHelper::CalculateZYMultiPathRoutes();
-    ndn::GlobalRoutingHelper::CalculateNoCommLinkMultiPathRoutes();
+    ndn::GlobalRoutingHelper::CalculateNoCommLinkMultiPathRoutes0();
+
 
     //ZhangYu Add the trace
 
@@ -164,7 +176,7 @@ main (int argc, char *argv[])
     csTracers = ndn::CsTracer::InstallAll ("cs-trace.txt", Seconds (1));
 
 
-    Simulator::Stop (Seconds (2000.0));
+    Simulator::Stop (Seconds (2.0));
 
     boost::tuple< boost::shared_ptr<std::ostream>, std::list<Ptr<ndn::L3AggregateTracer> > >  aggTracers = ndn::L3AggregateTracer::InstallAll ("aggregate-trace.txt", Seconds (0.5));
 

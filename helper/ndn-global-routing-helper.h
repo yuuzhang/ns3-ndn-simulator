@@ -17,6 +17,10 @@
  *
  * Author:  Alexander Afanasyev <alexander.afanasyev@ucla.edu>
  */
+//ZhangYu 2014-2-7 for DynamicRouting，否则不认识Name，试了很多.h才知道要包含ndn-interest.h
+#include "ns3/names.h"
+#include "ns3/ndn-interest.h"
+//---ZhangYu
 
 #ifndef NDN_GLOBAL_ROUTING_HELPER_H
 #define NDN_GLOBAL_ROUTING_HELPER_H
@@ -113,13 +117,13 @@ public:
    * 在每次发interest之前生成一条路由表，发完后销毁，不需要Cache，
    */
   static void
-  CalculateNoCommLinkMultiPathRoutes(Ptr<Node> srcNode, Ptr<Node> desNode);
+  CalculateNoCommLinkMultiPathRoutes(Ptr<Node> srcNode, Ptr<Node> desNode,Ptr<Name> &prefix1);
 
   /*
    * @ZY, no common link multi-path algorithms
    */
   static void
-  CalculateNoCommLinkMultiPathRoutes();
+  CalculateNoCommLinkMultiPathRoutes0();
 
   /**
    * @ZY, modify from CalculateAllPossibleRoutes.

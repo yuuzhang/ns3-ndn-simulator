@@ -309,6 +309,10 @@ GlobalRoutingHelper::ZYmodifyEdgeMetric()
 }
 
 std::vector <std::vector<uint16_t> >  originalMetric;  	//注意这里的> >之间要有空格，否则error: ‘>>’ should be ‘> >’ within a nested template argument list
+/*
+ * 在这个函数中，执行的是把图中所有的节点端口的Metric备份到 originalMetric或者从其中恢复。在备份的过程中有清空节点fib的语句。
+ * 这个清空fib的语句似乎不应该放在备份和恢复函数中，但是因为是从代码直接挪出来的，所以暂时这样 2014-2-1
+ */
 void
     BackupRestoreOrignalMetrics(const std::string &action)
     {
@@ -331,10 +335,10 @@ void
             }
 
             Ptr<Fib>  fib  = source->GetObject<Fib> ();   //只有这里获取fib，后面添加 Entry
+            NS_ASSERT (fib != 0);
             if (action=="Backup")
               fib->InvalidateAll ();  //2014-1-8，这一句最终调用的是fib-entry.cc中的，把一个节点的所有端口都设置为如：dev[2]=net(1,2-5)(65535,r,1) 后面的65535，r（表示RED）
             //因为没有只在Backup中执行，在每个节点进行多路径计算时，要恢复一下 metric，如果也运行上面InvaliateAll，会导致前面节点计算后添加的fib entry变为 65535,r。从而出错
-            NS_ASSERT (fib != 0);
 
             Ptr<L3Protocol> l3 = source->GetObject<L3Protocol> ();
             NS_ASSERT (l3 != 0);
@@ -353,7 +357,7 @@ void
                 {
                 	originalMetric[nodeId][faceId] = l3->GetFace (faceId)->GetMetric ();
                     //NS_LOG_DEBUG("ZhangYu 2014-1-2 =========================================nodeId: " <<nodeId << "    faceId: " <<faceId << "  Metric: "<< originalMetric[nodeId][faceId] );
-                    NS_LOG_DEBUG("ZhangYu ===============================================" << l3->GetFace (faceId)->GetInstanceTypeId());
+                    //NS_LOG_DEBUG("ZhangYu ===============================================" << l3->GetFace (faceId)->GetInstanceTypeId());
 
                     }
                 else
@@ -363,9 +367,9 @@ void
         }
     }
 void
-    GlobalRoutingHelper::CalculateNoCommLinkMultiPathRoutes(Ptr<Node>  srcNode, Ptr<Node>  desNode)
+    GlobalRoutingHelper::CalculateNoCommLinkMultiPathRoutes(Ptr<Node> srcNode, Ptr<Node> desNode,Ptr<Name> &prefix1)
     {
-        uint32_t  multipathNumber=2;    //共计算几条多路径
+        uint32_t  multipathNumber=1;    //共计算几条多路径
 
         BOOST_CONCEPT_ASSERT(( VertexListGraphConcept< NdnGlobalRouterGraph > ));
         BOOST_CONCEPT_ASSERT((IncidenceGraphConcept<NdnGlobalRouterGraph>));
@@ -378,8 +382,8 @@ void
         {
             NS_LOG_DEBUG ("Node " << (srcNode)->GetId () << " does not export GlobalRouter interface");
         }
-        
-    
+
+
         //NS_LOG_DEBUG("ZhangYu 2014-1-1 is consumer node Id: " << (*node)->GetId() <<" " << (appTypeStr.find("Consumer")) <<"'  "<< appTypeStr);
         NS_LOG_DEBUG ("===== Reachability from source Node: " << source->GetObject<Node> ()->GetId () << " (" << Names::FindName (source->GetObject<Node> ()) << ")");
 
@@ -404,91 +408,92 @@ void
                                      distance_combine (boost::ZYWeightCombine ())
                                      );
 
-            for(PredecessorsMap::iterator i=predecessors.begin();i!=predecessors.end();i++)
-            {
-                NS_LOG_DEBUG("ZhangYu 2013-5-21 predecessors node: " << i->first->GetObject<Node>()->GetId()  <<"  ParentNode: " <<i->second->GetObject<Node>()->GetId());
-            }
+//            for(PredecessorsMap::iterator i=predecessors.begin();i!=predecessors.end();i++)
+//            {
+//                NS_LOG_DEBUG("ZhangYu 2013-5-21 predecessors node: " << i->first->GetObject<Node>()->GetId()  <<"  ParentNode: " <<i->second->GetObject<Node>()->GetId());
+//            }
+//
+//            DistancesMap::iterator des=distances.find(desNode->GetObject<GlobalRouter>());
+//            BOOST_FOREACH (const Ptr<const Name> &prefix, des->first->GetLocalPrefixes ())
+//             {
+//            	std::cout << "ZhangYu 2014-2-6 =================" << *prefix << "\n";
+//             }
 
-
-            for (DistancesMap::iterator i = distances.begin (); i != distances.end (); i++)
-            {
-                if (i->first == source)
-                    continue;
-                else
-                {
-                    if (i->second.get<0> () == 0)
-                    {
-                        cout <<"  Node " << i->first->GetObject<Node> ()->GetId () << " is unreachable" << endl;
-                    }
-                    else
-                    {
-                        NS_LOG_DEBUG("ZhangYu 2014-1-3, Node:" << i->first->GetObject<Node>()->GetId()<< "   face:" << *i->second.get<0>()<<"  with distance:" <<i->second.get<1>());
-
-                        //下面的语句使得为每个producer的节点的每个应用添加路由fibs，为0就不循环，一个节点有多个Apps时循环（这里循环执行有点冗余，因为步骤一样，只是prefix不同，但是为了代码清爽，就这样了）
-                        if(i->first->GetObject<Node>()==desNode)
-                        BOOST_FOREACH (const Ptr<const Name> &prefix, i->first->GetLocalPrefixes ())
-                        {
-                            Ptr<GlobalRouter> curNode =i->first ;
-                            Ptr<GlobalRouter> preNode;
-                            NS_LOG_DEBUG("ZhangYu 2014-1-7 producer Node: " << curNode->GetObject<Node>()->GetId() << std::endl);
-
-                            while (curNode!=source)
-                            {
-                                preNode=predecessors[curNode];
-                                Ptr<Fib> fib  = preNode->GetObject<Fib> ();   //这里获取fib，后面添加 Entry
-                                //ZhangYu 2014-1-6，下面的这一句使得每个节点的所有出口都变成值最大，导致传播消息时出错
-                                //fib->InvalidateAll ();
-                                NS_ASSERT (fib != 0);   //2014-1-9现在还不清楚是否可以去掉这句
-
-                                if(uint16_t( i->second.get<1>()-distances[curNode].get<1> ())== std::numeric_limits<uint16_t>::max()-1)
-                                  {
-                                    std::cout << "ZhangYu 2014-1-8 我认为不应该出现这种情况，出现了是有逻辑错误" << std::endl << std::endl;
-                                  continue;
-                                  }
-                                Ptr<fib::Entry> entry = fib->Add (prefix, distances[curNode].get<0> (),  i->second.get<1>()-distances[preNode].get<1> ());
-                                NS_LOG_DEBUG("ZhangYu 2014-1-8 *entry: " << *entry);
-
-                                entry->SetRealDelayToProducer (distances[curNode].get<0> (), Seconds (i->second.get<2>()-distances[preNode].get<2>()));
-
-                                Ptr<Limits> faceLimits = distances[curNode].get<0> ()->GetObject<Limits> ();
-                                Ptr<Limits> fibLimits = entry->GetObject<Limits> ();
-                                if (fibLimits != 0)
-                                {
-                                    // if it was created by the forwarding strategy via DidAddFibEntry event
-                                    fibLimits->SetLimits (faceLimits->GetMaxRate (), 2 *  (i->second.get<2>()-distances[preNode].get<2>())/*exact RTT*/);
-                                    NS_LOG_DEBUG ("Set limit for prefix " << *prefix << " " << faceLimits->GetMaxRate () << " / " <<
-                                                  2* (i->second.get<2>()-distances[preNode].get<2>()) << "s (" << faceLimits->GetMaxRate () * 2 *  (i->second.get<2>()-distances[preNode].get<2>())<< ")");
-                                }
-
-                                //前面执行完了回溯路径，添加fib，后面的是把这条路径上的Link设置为不可用
-                                //更改边的代价时，可以参考CaculateAllPossibleRoutes中的l3->GetFace (faceId),这里更简单的是使用distances[curNode].get<0>()，一样的类型
-                                //NS_LOG_DEBUG("ZhangYu 2014-1-9 distances[curNode].get<0>()->GetInstanceTypeId()=====" << distances[curNode].get<0>()->GetInstanceTypeId());
-                                distances[curNode].get<0>()->SetMetric(std::numeric_limits<int16_t>::max ()-1); // value std::numeric_limits<int16_t>::max () MUST NOT be used (reserved)
-
-                                curNode=preNode;
-                            }
-
-                        }
-                        //for (uint32_t faceId = 0; faceId < l3->GetNFaces (); faceId++)
-                        {
-                            //NS_LOG_DEBUG("ZhangYu 2014-1-3 =============================" << *(l3->GetFace (faceId))<< "   metric: " << l3->GetFace (faceId)->GetMetric());
-                        }
-
-                    }
-                }
-            }
+//            for (DistancesMap::iterator i = distances.begin (); i != distances.end (); i++)
+//            {
+//                if (i->first == source)
+//                    continue;
+//                else
+//                {
+//                    if (i->second.get<0> () == 0)
+//                    {
+//                        cout <<"  Node " << i->first->GetObject<Node> ()->GetId () << " is unreachable" << endl;
+//                    }
+//                    else
+//                    {
+//                        NS_LOG_DEBUG("ZhangYu 2014-1-3, Node:" << i->first->GetObject<Node>()->GetId()<< "   face:" << *i->second.get<0>()<<"  with distance:" <<i->second.get<1>());
+//
+//                        //下面的语句使得为每个producer的节点的每个应用添加路由fibs，为0就不循环，一个节点有多个Apps时循环（这里循环执行有点冗余，因为步骤一样，只是prefix不同，但是为了代码清爽，就这样了）
+//                        if(i->first->GetObject<Node>()==desNode)
+//                        BOOST_FOREACH (const Ptr<const Name> &prefix, i->first->GetLocalPrefixes ())
+//                        {
+//                            Ptr<GlobalRouter> curNode =i->first ;
+//                            Ptr<GlobalRouter> preNode;
+//                            NS_LOG_DEBUG("ZhangYu 2014-1-7 producer Node: " << curNode->GetObject<Node>()->GetId() << std::endl);
+//
+//                            while (curNode!=source) //回溯到源节点，添加fib，修改链路
+//                            {
+//                                preNode=predecessors[curNode];
+//                                Ptr<Fib> fib  = preNode->GetObject<Fib> ();   //这里获取fib，后面添加 Entry
+//                                NS_ASSERT (fib != 0);   //https://www.nsnam.org/doxygen/group__assert.html#details
+//
+//                                if(uint16_t( i->second.get<1>()-distances[curNode].get<1> ())== std::numeric_limits<uint16_t>::max()-1)
+//                                  {
+//                                    std::cout << "ZhangYu 2014-1-8 我认为不应该出现这种情况，出现了是有逻辑错误" << std::endl << std::endl;
+//                                  continue;
+//                                  }
+//                                Ptr<fib::Entry> entry = fib->Add (prefix, distances[curNode].get<0> (),  i->second.get<1>()-distances[preNode].get<1> ());
+//                                NS_LOG_DEBUG("ZhangYu 2014-1-8 *entry: " << *entry);
+//
+//                                entry->SetRealDelayToProducer (distances[curNode].get<0> (), Seconds (i->second.get<2>()-distances[preNode].get<2>()));
+//
+//                                Ptr<Limits> faceLimits = distances[curNode].get<0> ()->GetObject<Limits> ();
+//                                Ptr<Limits> fibLimits = entry->GetObject<Limits> ();
+//                                if (fibLimits != 0)
+//                                {
+//                                    // if it was created by the forwarding strategy via DidAddFibEntry event
+//                                    fibLimits->SetLimits (faceLimits->GetMaxRate (), 2 *  (i->second.get<2>()-distances[preNode].get<2>())/*exact RTT*/);
+//                                    NS_LOG_DEBUG ("Set limit for prefix " << *prefix << " " << faceLimits->GetMaxRate () << " / " <<
+//                                                  2* (i->second.get<2>()-distances[preNode].get<2>()) << "s (" << faceLimits->GetMaxRate () * 2 *  (i->second.get<2>()-distances[preNode].get<2>())<< ")");
+//                                }
+//
+//                                //前面执行完了回溯路径，添加fib，后面的是把这条路径上的Link设置为不可用
+//                                //更改边的代价时，可以参考CaculateAllPossibleRoutes中的l3->GetFace (faceId),这里更简单的是使用distances[curNode].get<0>()，一样的类型
+//                                NS_LOG_DEBUG("ZhangYu 2014-1-9 distances[curNode].get<0>()->GetInstanceTypeId()=====" << distances[curNode].get<0>()->GetInstanceTypeId());
+//                                distances[curNode].get<0>()->SetMetric(std::numeric_limits<int16_t>::max ()-1); // value std::numeric_limits<int16_t>::max () MUST NOT be used (reserved)
+//
+//                                curNode=preNode;
+//                            }
+//
+//                        }
+//                        //for (uint32_t faceId = 0; faceId < l3->GetNFaces (); faceId++)
+//                        {
+//                            //NS_LOG_DEBUG("ZhangYu 2014-1-3 =============================" << *(l3->GetFace (faceId))<< "   metric: " << l3->GetFace (faceId)->GetMetric());
+//                        }
+//
+//                    }
+//                }
+//            }
+            
         }
 
-    }
-        
-    
         NS_LOG_DEBUG("ZhangYu 2014-1-6 =========================================================================end of CalculateNoCommLinkMultiPathRoutes");
     }
 
 void
-    GlobalRoutingHelper::CalculateNoCommLinkMultiPathRoutes()
+    GlobalRoutingHelper::CalculateNoCommLinkMultiPathRoutes0()
     {
-        uint32_t  multipathNumber=2;    //共计算几条多路径
+        uint32_t  multipathNumber=1;    //共计算几条多路径
         
         BOOST_CONCEPT_ASSERT(( VertexListGraphConcept< NdnGlobalRouterGraph > ));
         BOOST_CONCEPT_ASSERT((IncidenceGraphConcept<NdnGlobalRouterGraph>));
@@ -519,8 +524,6 @@ void
                    	//NS_LOG_DEBUG("ZhangYu 2014-1-1 is consumer node Id: " << (*node)->GetId() <<" " << (appTypeStr.find("Consumer")) <<"'  "<< appTypeStr);
                     NS_LOG_DEBUG ("===== Reachability from source Node: " << source->GetObject<Node> ()->GetId () << " (" << Names::FindName (source->GetObject<Node> ()) << ")");
                     
-                    //恢复originalMetric
-                    BackupRestoreOrignalMetrics("Restore");
 
                     //计算包含这个consumer的节点到其他节点的最短路
                     for(uint32_t pathIndex=0; pathIndex<multipathNumber;pathIndex++)
@@ -541,7 +544,7 @@ void
                                                  .
                                                  distance_combine (boost::ZYWeightCombine ())
                                                  );
-                        
+                        NS_LOG_DEBUG("ZhangYu 2014-2-7 pathIndex: " << pathIndex << endl);
                         for(PredecessorsMap::iterator i=predecessors.begin();i!=predecessors.end();i++)
                         {
                             NS_LOG_DEBUG("ZhangYu 2013-5-21 predecessors node: " << i->first->GetObject<Node>()->GetId()  <<"  ParentNode: " <<i->second->GetObject<Node>()->GetId());
@@ -567,7 +570,7 @@ void
                                     {
                                         Ptr<GlobalRouter> curNode =i->first ;
                                         Ptr<GlobalRouter> preNode;
-                                        NS_LOG_DEBUG("ZhangYu 2014-1-7 producer Node: " << curNode->GetObject<Node>()->GetId() << std::endl);
+                                        NS_LOG_DEBUG("ZhangYu 2014-1-7 producer Node: " << curNode->GetObject<Node>()->GetId() );
 
                                         while (curNode!=source)
                                         {
@@ -622,9 +625,13 @@ void
                         }
                     }
 
+                    //恢复originalMetric
+                    BackupRestoreOrignalMetrics("Restore");
                 }
             }
         }
+        BackupRestoreOrignalMetrics("Restore");
+
         NS_LOG_DEBUG("ZhangYu 2014-1-6 =========================================================================end of CalculateNoCommLinkMultiPathRoutes");
     }
     

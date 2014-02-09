@@ -173,7 +173,30 @@ Face::GetMetric (void) const
   NS_LOG_FUNCTION_NOARGS ();
   return m_metric;
 }
-
+void
+Face::SetisOccupied(bool isOccupied)
+{
+	NS_LOG_FUNCTION(isOccupied);
+	zy_isOccupied=isOccupied;
+}
+bool
+Face::GetisOccupied(void) const
+{
+	NS_LOG_FUNCTION_NOARGS();
+	return zy_isOccupied;
+}
+void
+Face::SetLinkCapacity(uint32_t LinkCapacity)
+{
+	NS_LOG_FUNCTION(LinkCapacity);
+	zy_LinkCapacity=LinkCapacity;
+}
+uint32_t
+Face::GetLinkCapacity(void) const
+{
+	NS_LOG_FUNCTION_NOARGS();
+	return zy_LinkCapacity;
+}
 /**
  * These are face states and may be distinct from
  * NetDevice states, such as found in real implementations

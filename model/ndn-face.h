@@ -123,7 +123,13 @@ public:
    * \returns configured routing/forwarding metric (cost) of this face
    */
   virtual uint16_t GetMetric (void) const;
-
+  /*
+   *\ZhangYu 2014-2-2 为了谢振勇的动态路由，代价和链路占用状态，当端口占用时（描述不准确，端口可以被其他的prefix的占用，不可以更新fib
+   */
+  virtual void SetisOccupied(bool isOccupied);
+  virtual bool GetisOccupied(void) const;
+  virtual void SetLinkCapacity(uint32_t LinkCapacity);
+  virtual uint32_t GetLinkCapacity(void) const;
   /**
    * These are face states and may be distinct from actual lower-layer
    * device states, such as found in real implementations (where the
@@ -214,6 +220,9 @@ private:
   bool m_ifup; ///< \brief flag indicating that the interface is UP 
   uint32_t m_id; ///< \brief id of the interface in NDN stack (per-node uniqueness)
   uint32_t m_metric; ///< \brief metric of the face
+  //ZhangYu 2014-2-2 为了谢振勇的动态路由，链路代价和链路的容量和延迟有关
+  bool zy_isOccupied;
+  uint32_t zy_LinkCapacity;
 
   TracedCallback<Ptr<const Packet> > m_txTrace;
   TracedCallback<Ptr<const Packet> > m_rxTrace;

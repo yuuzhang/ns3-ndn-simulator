@@ -85,6 +85,7 @@ BestRoute::DoPropagateInterest (Ptr<Face> inFace,
     {
       NS_LOG_DEBUG ("Trying " << boost::cref(metricFace));
       NS_LOG_DEBUG("ZhangYu 2013-10-17========================== " << pitEntry->GetPrefix() << "      propagatedCount = " << propagatedCount);
+      NS_LOG_DEBUG("ZhangYu 2014-2-5 pitEntry->GetFibEntry: " << *pitEntry->GetFibEntry());
       if (metricFace.GetStatus () == fib::FaceMetric::NDN_FIB_RED) // all non-read faces are in front
         break;
 

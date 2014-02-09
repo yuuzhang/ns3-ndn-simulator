@@ -172,6 +172,8 @@ L3Protocol::AddFace (const Ptr<Face> &face)
 void
 L3Protocol::RemoveFace (Ptr<Face> face)
 {
+	NS_LOG_FUNCTION (this << face);
+
   // ask face to register in lower-layer stack
   face->RegisterProtocolHandler (MakeNullCallback<void,const Ptr<Face>&,const Ptr<const Packet>&> ());
   Ptr<Pit> pit = GetObject<Pit> ();
@@ -201,6 +203,8 @@ L3Protocol::RemoveFace (Ptr<Face> face)
 
   GetObject<Fib> ()->RemoveFromAll (face);
   m_forwardingStrategy->RemoveFace (face); // notify that face is removed
+  NS_LOG_DEBUG("ZhangYu 2014-2-3 removeFacce===============================================================: " << *face);
+  //上面这一句根本没有执行，添加上前面的NS_LOG_FUNCTION后，发现这个函数没有执行
 }
 
 Ptr<Face>

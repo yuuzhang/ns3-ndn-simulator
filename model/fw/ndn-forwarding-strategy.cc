@@ -111,7 +111,7 @@ ForwardingStrategy::NotifyNewAggregate ()
   if (m_pit == 0)
     {
       m_pit = GetObject<Pit> ();
-      NS_LOG_DEBUG("ZhangYu 2013-10-21==========================================================" << m_pit->GetSize());
+      //NS_LOG_DEBUG("ZhangYu 2013-10-21==========================================================" << m_pit->GetSize());
     }
   if (m_fib == 0)
     {
@@ -150,11 +150,11 @@ ForwardingStrategy::OnInterest (Ptr<Face> inFace,
       pitEntry = m_pit->Create (header);
 
       //ZhangYu 2013-1-7 调试多路径Create pitEntry后的
-      NS_LOG_DEBUG("ZhangYu 2014-1-7=================2====== " << *pitEntry->GetFibEntry() << std::endl );
+      //NS_LOG_DEBUG("ZhangYu 2014-1-7=================2====== " << *pitEntry->GetFibEntry() << std::endl );
       BOOST_FOREACH (const fib::FaceMetric &metricFace, pitEntry->GetFibEntry ()->m_faces.get<fib::i_metric> ())
         {
           NS_LOG_DEBUG ("Trying " << boost::cref(metricFace));
-          NS_LOG_DEBUG("ZhangYu 2014-1-7========================== " << pitEntry->GetPrefix() );
+          //NS_LOG_DEBUG("ZhangYu 2014-1-7========================== " << pitEntry->GetPrefix() );
          // if (metricFace.GetStatus () == fib::FaceMetric::NDN_FIB_RED) // all non-read faces are in front
           //  break;
         }
@@ -377,6 +377,8 @@ ForwardingStrategy::DidExhaustForwardingOptions (Ptr<Face> inFace,
 
       // Set pruning timout on PIT entry (instead of deleting the record)
       m_pit->MarkErased (pitEntry);
+      //ZhangYu 2014-2-4 为了DynamicRouting，添加的删除fib，认为和MarkErased一样的执行条件（共3处，但是L3Protocol中的MarkErased没有执行）。
+      NS_LOG_DEBUG("ZhangYu 2014-2-4 inFace" << inFace->GetNode());
     }
 }
 
@@ -408,6 +410,15 @@ ForwardingStrategy::SatisfyPendingInterest (Ptr<Face> inFace,
                                             Ptr<const Packet> origPacket,
                                             Ptr<pit::Entry> pitEntry)
 {
+	NS_LOG_DEBUG("ZhangYu 2014-2-5 SatisfyPendingInterest input arguments for LongestPrefixMatch() -" << *pitEntry->GetInterest());
+  Ptr<fib::Entry> fibEntry = GetObject<Fib>()->LongestPrefixMatch(*pitEntry->GetInterest());
+  NS_LOG_DEBUG("ZhangYu 2014-2-5 output arguments for LongestPrefixMatch -" << *fibEntry);
+  //2014-2-4 ZhangYu
+  //GetObject<Fib>()->Remove(&fibEntry->GetPrefix());
+
+  NS_LOG_DEBUG("ZhangYu 2014-2-4  m_fib " << GetObject<Fib>()->GetSize() <<"  " << fibEntry->GetPrefix());
+
+  //BOOST_FOREACH(Ptr<fib::Entry> entry, GetObject<Fib>())
   if (inFace != 0)
     pitEntry->RemoveIncoming (inFace);
 
@@ -434,6 +445,9 @@ ForwardingStrategy::SatisfyPendingInterest (Ptr<Face> inFace,
 
   // Set pruning timout on PIT entry (instead of deleting the record)
   m_pit->MarkErased (pitEntry);
+  //ZhangYu 2014-2-4 为了DynamicRouting，添加的删除fib，认为和MarkErased一样的执行条件（共3处，但是L3Protocol中的MarkErased没有执行）。
+  //GetObject<Node>()->GetId()==inFace->GetNode()->GetId());
+  //NS_LOG_DEBUG("ZhangYu 2014-2-4 inFace================================" << GetObject<Node>()->GetId() << "====================" << *inFace);
 }
 
 void
@@ -517,7 +531,7 @@ ForwardingStrategy::PropagateInterest (Ptr<Face> inFace,
   /// @todo Make lifetime per incoming interface
   pitEntry->UpdateLifetime (header->GetInterestLifetime ());
   NS_LOG_DEBUG("ZhangYu 2013-8-29 InterestLifetime: " << header->GetInterestLifetime());
-  NS_LOG_DEBUG("ZhangYu 2013-10-21====================================================================" << m_pit->GetSize());
+  NS_LOG_DEBUG("ZhangYu 2013-10-21 m_pit->GetSize: " << m_pit->GetSize());
 
   bool propagated = DoPropagateInterest (inFace, header, origPacket, pitEntry);
 
