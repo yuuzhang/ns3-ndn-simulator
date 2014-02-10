@@ -83,8 +83,8 @@ Producer::StartApplication ()
 
   App::StartApplication ();
 
-  NS_LOG_DEBUG ("ZhangYu 2013-8-20 NodeID: " << GetNode ()->GetId ());
-  
+  //NS_LOG_DEBUG ("ZhangYu 2013-8-20 NodeID: " << GetNode ()->GetId ());
+  //ZhangYu 2014-2-10 下面的语句是为每个producer节点添加local的fib
   Ptr<Fib> fib = GetNode ()->GetObject<Fib> ();
   
   Ptr<fib::Entry> fibEntry = fib->Add (m_prefix, m_face, 0);

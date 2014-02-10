@@ -109,7 +109,7 @@ public:
    * @ZY, back up originalMetric for all edges, using in CalculateNoCommLinkMultiPathRoutes
    */
   static void
-    BackupRestoreOriginalMetrics(const std::string &action);
+    BackupRestoreOriginalMetrics(const std::string action);
 
 
   /*
@@ -123,7 +123,7 @@ public:
    * @ZY, no common link multi-path algorithms
    */
   static void
-  CalculateNoCommLinkMultiPathRoutes0();
+  CalculateNoCommLinkMultiPathRoutes();
 
   /**
    * @ZY, modify from CalculateAllPossibleRoutes.

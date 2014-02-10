@@ -350,7 +350,7 @@ PitImpl<Policy>::Create (Ptr<const Interest> header)
 {
   NS_LOG_DEBUG (header->GetName ());
   Ptr<fib::Entry> fibEntry = m_fib->LongestPrefixMatch (*header);
-  std::cout << "ZhangYu 2014-2-5 PitImpl<Policy>::Creat( ) =================" << *fibEntry <<"\n";
+  //std::cout << "ZhangYu 2014-2-5 PitImpl<Policy>::Creat( ) =================" << *fibEntry <<"\n";
   if (fibEntry == 0)
     return 0;
 
@@ -361,7 +361,7 @@ PitImpl<Policy>::Create (Ptr<const Interest> header)
   Ptr< entry > newEntry = ns3::Create< entry > (boost::ref (*this), header, fibEntry);
 
   //ZhangYu 2013-1-7 发现使用BestRoute和我自己的多路径，Create pitEntry就不一样。
-  std::cout << "ZhangYu 2014-2-5 *header: " <<*header <<"   fibEntry: " << *fibEntry<< std::endl;
+  //std::cout << "ZhangYu 2014-2-5 *header: " <<*header <<"   fibEntry: " << *fibEntry<< std::endl;
   //std::cout << "ZhangYu 2014-1-7=================1====== " << *newEntry->GetFibEntry() << "\n" ;
  /* BOOST_FOREACH (const fib::FaceMetric &metricFace, pitEntry->GetFibEntry ()->m_faces.get<fib::i_metric> ())
     {

@@ -88,6 +88,9 @@ public:
   virtual Ptr<Entry>
   LongestPrefixMatch (const Interest &interest);
 
+  virtual Ptr<Entry>
+  MultiPathLongestPrefixMatch (const Interest &interest);
+
   virtual Ptr<fib::Entry>
   Find (const Name &prefix);
   

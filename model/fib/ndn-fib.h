@@ -66,6 +66,9 @@ public:
   virtual Ptr<fib::Entry>
   LongestPrefixMatch (const Interest &interest) = 0;
 
+  virtual Ptr<fib::Entry>
+  MultiPathLongestPrefixMatch (const Interest &interest) = 0;
+
   /**
    * @brief Get FIB entry for the prefix (exact match)
    *

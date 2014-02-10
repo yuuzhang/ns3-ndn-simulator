@@ -82,6 +82,12 @@ public:
   SendPacket ();
 
   /**
+   * @ZhangYu for Calculate DynamicRouting, 2014-2-10,  more complex traffic model is under developing.
+   */
+  void
+  CalculateDynamicRouting(Ptr<Name> nameWithSequence);
+
+  /**
    * @brief An event that is fired just before an Interest packet is actually send out (send is inevitable)
    *
    * The reason for "before" even is that in certain cases (when it is possible to satisfy from the local cache),

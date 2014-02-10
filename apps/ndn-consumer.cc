@@ -238,10 +238,7 @@ Consumer::SendPacket ()
   packet->AddHeader (interestHeader);
   NS_LOG_DEBUG ("Interest packet size: " << packet->GetSize ());
 
-  //ZhangYu 2014-2-6 为每个数据包动态计算路由，在产生了一个interest后，发送前为这个包计算路由
-  //ndn::GlobalRoutingHelper::CalculateNoCommLinkMultiPathRoutes(this->m_node,NodeList::GetNode(5),nameWithSequence);
-
-
+  CalculateDynamicRouting(nameWithSequence);
 
   WillSendOutInterest (seq);  
 
@@ -254,6 +251,26 @@ Consumer::SendPacket ()
   ScheduleNextPacket ();
 }
 
+/*
+ * ZhangYu 2014-2-10 要实现动态路由，分析后认为应该是在产生了一个interest后，计算路由并为相关节点添加fib，在forwarding-strategy.cc的satisfiyPendingInterest中删除fib
+ * 目前来看这种实现是正确的。
+ */
+void
+Consumer::CalculateDynamicRouting(Ptr<Name> nameWithSequence)
+{
+    for (NodeList::Iterator node = NodeList::Begin (); node != NodeList::End (); node++)
+    {
+		for(uint32_t appId=0; appId<(*node)->GetNApplications();appId++)
+		{
+			std::string appTypeStr= (*node)->GetApplication(appId)->GetInstanceTypeId().GetName();
+			if(std::string::npos!= appTypeStr.find("Producer"))
+			{
+				//ZhangYu 2014-2-6 为每个数据包动态计算路由，在产生了一个interest后，发送前为这个包计算路由
+				ndn::GlobalRoutingHelper::CalculateNoCommLinkMultiPathRoutes(this->m_node,*node,nameWithSequence);
+			}
+		}
+    }
+}
 ///////////////////////////////////////////////////
 //          Process incoming packets             //
 ///////////////////////////////////////////////////

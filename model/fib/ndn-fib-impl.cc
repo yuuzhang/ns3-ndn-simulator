@@ -82,9 +82,32 @@ FibImpl::DoDispose (void)
 Ptr<Entry>
 FibImpl::LongestPrefixMatch (const Interest &interest)
 {
+	super::iterator item = super::longest_prefix_match (interest.GetName ());
+	//super::iterator item = super::find_exact(interest.GetName ());
+  // @todo use predicate to search with exclude filters
+
+  if (item == super::end ())
+    return 0;
+  else
+    return item->payload ();
+}
+
+/*
+ * ZhangYu 2014-2-9 多路径下的fib查找程序。在routing-helper中查找多路径，找到一条后，将其链路metric设置为最大，然后找另一条。例如节点2，先前找到[2-5]，然后找到[2-1]，fib添加2-1,会更新2-5的metric为最大，这是我们不希望的
+ * 解决方案有两种，一种是修改fib->Add，不让其更新，这样觉得不好。没有区分不同路径的fib，万一将来要进行精确控制，麻烦比较多。如果只是不让更新，除非是无公共节点，否则出现链路相交，包往哪里传就混乱了。
+ *
+ * 两种解决方案中的另一种，为不同的路径添加的是相同的prefix的fib，这样找到[2-1]时也会找到[2-5]，但是不会update metric
+ * 但是在编写的过程中才发现，metric是不需要在这里Updat就已经变成了max，在global-routing-help中，设置了max后，就变了，metric是引用型的，所以这个函数是
+ */
+Ptr<Entry>
+FibImpl::MultiPathLongestPrefixMatch (const Interest &interest)
+{
 	NS_LOG_DEBUG("ZhangYu 2014-2-5 =====================PM:3:07====== " << interest.GetName());
 
-	super::iterator item = super::longest_prefix_match (interest.GetName ());
+	Ptr<Name> temp=Create<Name> ("prefix/1");
+	Interest zyinterest;
+	zyinterest.SetName (temp);
+	super::iterator item = super::longest_prefix_match (zyinterest.GetName ());
 	//super::iterator item = super::find_exact(interest.GetName ());
   // @todo use predicate to search with exclude filters
 
@@ -133,7 +156,7 @@ FibImpl::Add (const Ptr<const Name> &prefix, Ptr<Face> face, int32_t metric)
                      ll::bind (&Entry::AddOrUpdateRoutingMetric, ll::_1, face, metric));
       
       /* ZhangYu 2013-12-27 为了检查MultiPath对Fib的修改，添加的语句
-       * 现在还不清楚为啥到了节点8的时候，face->GetObject<NetDeviceFace>()==0了，但是为了不中断程序执行，加了if判断
+       * 节点8的时候，face->GetObject<NetDeviceFace>()==0了，添加的是local[3]，此时调用Add的不是路由计算，是ProducerHelp.Install。为了不中断程序执行，加了if判断
        */
       /**/NS_LOG_DEBUG("ZhangYu 2013-12-25 face: " <<face->GetId() <<"  Node: " << face->GetNode()->GetId() <<"  metric: " << metric );
       if(face->GetObject<NetDeviceFace>())
@@ -162,13 +185,6 @@ FibImpl::Add (const Ptr<const Name> &prefix, Ptr<Face> face, int32_t metric)
     return 0;
   }
 }
-
-/*
- * ZhangYu 2014-2-8
- */
-
-
-
 
 void
 FibImpl::Remove (const Ptr<const Name> &prefix)
@@ -206,7 +222,7 @@ FibImpl::Remove (const Ptr<const Name> &prefix)
 void
 FibImpl::InvalidateAll ()
 {
-  //NS_LOG_FUNCTION ("ZhangYu 2013-12-25 NodeId: " << this->GetObject<Node> ()->GetId ());
+  NS_LOG_FUNCTION ("ZhangYu 2013-12-25 NodeId: " << this->GetObject<Node> ()->GetId ());
 
   super::parent_trie::recursive_iterator item (super::getTrie ());
   super::parent_trie::recursive_iterator end (0);

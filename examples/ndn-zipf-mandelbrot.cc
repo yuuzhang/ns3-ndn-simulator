@@ -94,8 +94,8 @@ main (int argc, char *argv[])
     // Install CCNx stack on all nodes
     ndn::StackHelper ccnxHelper;
     //ccnxHelper.SetForwardingStrategy ("ns3::ndn::fw::SmartFlooding");
-    //ccnxHelper.SetForwardingStrategy ("ns3::ndn::fw::Flooding");
-    ccnxHelper.SetForwardingStrategy ("ns3::ndn::fw::BestRoute");
+    ccnxHelper.SetForwardingStrategy ("ns3::ndn::fw::Flooding");
+    //ccnxHelper.SetForwardingStrategy ("ns3::ndn::fw::BestRoute");
     ccnxHelper.SetContentStore ("ns3::ndn::cs::Lru", "MaxSize", "1");
     ccnxHelper.InstallAll ();
     
@@ -106,7 +106,7 @@ main (int argc, char *argv[])
 
     NodeContainer consumerNodes;
     //consumerNodes.Add(grid.GetNode(2,0));
-    consumerNodes.Add (grid.GetNode (0,2));
+    consumerNodes.Add (grid.GetNode (0,0));
     //consumerNodes.Add (grid.GetNode (1,0));
     //consumerNodes.Add (grid.GetNode (1,2));
 
@@ -135,15 +135,15 @@ main (int argc, char *argv[])
     consumerHelper.Install (consumerNodes);
 
     //ZhangYu 2013-12-30, 添加多个consumer和producer
-    consumerHelper.SetPrefix("/prefix");
-    consumerHelper.Install(grid.GetNode(2,0));
+    //consumerHelper.SetPrefix("/prefix");
+    //consumerHelper.Install(grid.GetNode(2,0));
 
 
     // Getting containers for the consumer/producer
     //Ptr<Node> producer = grid.GetNode (aRowNodes-1, aRowNodes-1);
     NodeContainer producerNodes;
 
-    producerNodes.Add (grid.GetNode(aRowNodes-2, aRowNodes-1));
+    producerNodes.Add (grid.GetNode(aRowNodes-1, aRowNodes-1));
     //producerNodes.Add (grid.GetNode(aRowNodes-1, aRowNodes-2));
 
 
@@ -167,7 +167,8 @@ main (int argc, char *argv[])
     //ccnxGlobalRoutingHelper.CalculateRoutes ();
     //ndn::GlobalRoutingHelper::CalculateAllPossibleRoutes();
     //ndn::GlobalRoutingHelper::CalculateZYMultiPathRoutes();
-    ndn::GlobalRoutingHelper::CalculateNoCommLinkMultiPathRoutes0();
+    ndn::GlobalRoutingHelper::CalculateNoCommLinkMultiPathRoutes();
+    //ndn::GlobalRoutingHelper::BackupRestoreOriginalMetrics("Backup&Initial");
 
 
     //ZhangYu Add the trace
@@ -176,7 +177,7 @@ main (int argc, char *argv[])
     csTracers = ndn::CsTracer::InstallAll ("cs-trace.txt", Seconds (1));
 
 
-    Simulator::Stop (Seconds (2.0));
+    Simulator::Stop (Seconds (2000.0));
 
     boost::tuple< boost::shared_ptr<std::ostream>, std::list<Ptr<ndn::L3AggregateTracer> > >  aggTracers = ndn::L3AggregateTracer::InstallAll ("aggregate-trace.txt", Seconds (0.5));
 
