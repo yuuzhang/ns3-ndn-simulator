@@ -373,7 +373,7 @@ void
 void
     GlobalRoutingHelper::CalculateNoCommLinkMultiPathRoutes(Ptr<Node> srcNode, Ptr<Node> desNode,Ptr<Name> &prefix1)
     {
-        uint32_t  multipathNumber=2;    //共计算几条多路径
+        uint32_t  multipathNumber=3;    //共计算几条多路径
 
         BOOST_CONCEPT_ASSERT(( VertexListGraphConcept< NdnGlobalRouterGraph > ));
         BOOST_CONCEPT_ASSERT((IncidenceGraphConcept<NdnGlobalRouterGraph>));
@@ -453,7 +453,6 @@ void
         }
         //恢复originalMetric
         BackupRestoreOrignalMetrics("Restore");
-
         NS_LOG_DEBUG("ZhangYu 2014-1-6 =========================================================================end of CalculateNoCommLinkMultiPathRoutes");
     }
 

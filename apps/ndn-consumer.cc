@@ -267,6 +267,8 @@ Consumer::CalculateDynamicRouting(Ptr<Name> nameWithSequence)
 			{
 				//ZhangYu 2014-2-6 为每个数据包动态计算路由，在产生了一个interest后，发送前为这个包计算路由
 				ndn::GlobalRoutingHelper::CalculateNoCommLinkMultiPathRoutes(this->m_node,*node,nameWithSequence);
+				//std::cout << "ZhangYu 2014-2-13 ==== 2   " << (*node)->GetId() << std::endl;
+
 			}
 		}
     }

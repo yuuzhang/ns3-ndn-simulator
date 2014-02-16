@@ -157,16 +157,16 @@ ForwardingStrategy::OnInterest (Ptr<Face> inFace,
       pitEntry = m_pit->Create (header);
 
       //ZhangYu 2013-1-7 调试多路径Create pitEntry后的
+      if(pitEntry!=0) //2014-2-16号，谢振勇的程序运行出错，发现是需要加上这一句才可以
+      {
       NS_LOG_DEBUG("ZhangYu 2014-1-7===== *header" << *header << "==== Node: " << GetObject<Node>()->GetId() << " ====== *pitEntry: " << *pitEntry->GetFibEntry() << std::endl );
       BOOST_FOREACH (const fib::FaceMetric &metricFace, pitEntry->GetFibEntry ()->m_faces.get<fib::i_metric> ())
         {
           NS_LOG_DEBUG ("Trying " << boost::cref(metricFace));
           if(metricFace.GetRoutingCost() >= std::numeric_limits<int16_t>::max ()-1)
         	  NS_LOG_DEBUG("ZhangYu 2014-2-9 ==================Error!======== trying a face which routing cost is greater than max");
-          //NS_LOG_DEBUG("ZhangYu 2014-1-7========================== " << pitEntry->GetPrefix() );
-         // if (metricFace.GetStatus () == fib::FaceMetric::NDN_FIB_RED) // all non-read faces are in front
-          //  break;
         }
+      } //--ZhangYu
       if (pitEntry != 0)
         {
           DidCreatePitEntry (inFace, header, origPacket, pitEntry);

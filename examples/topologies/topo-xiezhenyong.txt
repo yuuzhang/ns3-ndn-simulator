@@ -1,0 +1,67 @@
+
+
+#   /--------\	    /-\	        /-\
+#   |Consumer|<---->| |<------->| |
+#   \--------/	    \-/	        \-/
+#       ^   	     ^ 	         ^
+#       |            |           |   1Mbps/10ms delay
+#       v            v           v
+#      /-\          /-\         /-\
+#      | |<-------->| |<------->| |
+#      \-/          \-/         \-/
+#       ^   	     ^ 	         ^
+#       |            |           |
+#       v            v           v
+#      /-\	    /-\	     /--------\
+#      | |<-------->| |<---->|Producer|
+#      \-/          \-/      \--------/
+
+# any empty lines and lines starting with '#' symbol is ignored
+#
+# The file should contain exactly two sections: router and link, each starting with the corresponding keyword
+#
+# router section defines topology nodes and their relative positions (e.g., to use in visualizer)
+router
+
+# each line in this section represents one router and should have the following data
+# node  comment     yPos    xPos  systemID
+Node0   NA          4       2	  0
+Node1   NA          3       1	  1
+Node2   NA          3       2	  2
+Node3   NA          3       3	  3
+Node4   NA          2       1	  4
+Node5   NA          2       2	  5
+Node6   NA          2       3	  6
+Node7   NA          1       2	  7
+# Note that `node` can be any string. It is possible to access to the node by name using Names::Find, see examples.
+
+# link section defines point-to-point links between nodes and characteristics of these links
+link
+
+# Each line should be in the following format (only first two are required, the rest can be omitted)
+# srcNode   dstNode     bandwidth   metric  delay   queue
+# bandwidth: link bandwidth
+# metric: routing metric
+# delay:  link delay
+# queue:  MaxPackets for transmission queue on the link (both directions)
+Node0       Node1       8Mbps       630       6ms     10000
+Node0       Node2       9Mbps       610       12ms    10000
+Node0       Node3       10Mbps      635       9ms     10000
+
+Node1       Node4       3Mbps       1020      48ms    10000
+Node1       Node5       1Mbps       1295      54ms    10000
+Node1       Node6       2Mbps       1090      60ms    10000
+
+Node2       Node4       2Mbps       1075      60ms    10000
+Node2       Node5       3Mbps       1050      60ms    10000
+Node2       Node6       2Mbps       1290      66ms    10000
+
+Node3       Node4       2Mbps       1105      66ms    10000
+Node3       Node5       3Mbps       1120      78ms    10000
+Node3       Node6       4Mbps       1025      72ms    10000
+
+Node4       Node7       10Mbps      580       6ms     10000
+Node5       Node7       11Mbps      555       6ms     10000
+Node6       Node7       12Mbps      575       9ms     10000
+
+

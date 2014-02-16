@@ -238,6 +238,7 @@ AnnotatedTopologyReader::Read (void)
       link.SetAttribute ("DataRate", capacity);
       link.SetAttribute ("OSPF", metric);
 
+
       if (!delay.empty ())
           link.SetAttribute ("Delay", delay);
       if (!maxPackets.empty ())

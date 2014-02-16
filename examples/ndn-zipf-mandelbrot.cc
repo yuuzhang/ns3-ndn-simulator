@@ -32,6 +32,7 @@
 // for ndn::L3RateTracer
 #include <ns3/ndnSIM/utils/tracers/ndn-l3-rate-tracer.h>
 //ZhangYu 2014-2-7 for DynamicRouting，否则不认识Name，试了很多.h才知道要包含ndn-interest.h
+
 #include "ns3/names.h"
 #include "ns3/ndn-name.h"
 #include "string.h"
@@ -177,7 +178,7 @@ main (int argc, char *argv[])
     csTracers = ndn::CsTracer::InstallAll ("cs-trace.txt", Seconds (1));
 
 
-    Simulator::Stop (Seconds (2000.0));
+    Simulator::Stop (Seconds (20.0));
 
     boost::tuple< boost::shared_ptr<std::ostream>, std::list<Ptr<ndn::L3AggregateTracer> > >  aggTracers = ndn::L3AggregateTracer::InstallAll ("aggregate-trace.txt", Seconds (0.5));
 
