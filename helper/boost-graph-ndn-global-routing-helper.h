@@ -1,3 +1,11 @@
+/*
+ * ZhangYu 2014-3-21为了解决在计算NoCommLinkMultiPath时，出现的异常退出的问题
+ * 是由于EdgeMetric是uint16，当在ndn-global-routing-helper.cc中查找第二条路径时，需要通过把第一条路径的边metric设置为uint16_t::max，这样导致再执行WeightCombine时
+ * 65535+11=10 < 65535，使得程序认为edgeMetric的11是负数，引发错误，只要把几处uint16替换为uint32，这样可以得到65546，就可以避免这个问题了。
+ * 将几处uint_16替换可以使得计算正确
+ */
+
+
 /* -*-  Mode: C++; c-file-style: "gnu"; indent-tabs-mode:nil; -*- */
 /*
  * Copyright (c) 2012 University of California, Los Angeles
@@ -215,6 +223,12 @@ struct property_traits< EdgeWeights >
 const property_traits< EdgeWeights >::value_type WeightZero (0, 0, 0.0);
 const property_traits< EdgeWeights >::value_type WeightInf (0, std::numeric_limits<uint16_t>::max (), 0.0);
 
+/*
+ * 在调试multipath时，出错，是因为在compare中，如果a.get<1>()<b时，在下面的语句中抛出negative_edge的错误。导致程序异常退出，
+ * if (m_compare(m_combine(source_dist, get(m_weight, e)), source_dist))
+ *        boost::throw_exception(negative_edge());
+ * 这里的a.get<1>()是zycombine返回的边的代价，在zycombine中，
+*/
 struct WeightCompare :
     public std::binary_function<property_traits< EdgeWeights >::reference,
                                 property_traits< EdgeWeights >::reference,
@@ -224,6 +238,7 @@ struct WeightCompare :
   operator () (property_traits< EdgeWeights >::reference a,
                property_traits< EdgeWeights >::reference b) const
   {
+	//std::cout << "ZhangYu 2014-3-21 ===========" << a.get<1>() << "    b.get :" << b.get<1>() << std::endl;
     return a.get<1> () < b.get<1> ();
   }
 
@@ -231,6 +246,7 @@ struct WeightCompare :
   operator () (property_traits< EdgeWeights >::reference a,
                uint32_t b) const
   {
+	//std::cout << "ZhangYu 2014-3-21 ===========" << a.get<1>() << "    b :" << b << std::endl;
     return a.get<1> () < b;
   }
   
@@ -238,6 +254,7 @@ struct WeightCompare :
   operator () (uint32_t a,
                uint32_t b) const
   {
+	//std::cout << "ZhangYu 2014-3-21 ===========" << a << "    b :" << b << std::endl;
     return a < b;
   }
 };
@@ -272,12 +289,6 @@ struct WeightCombine :
     }
     else
       {
-        /*
-         * 2014-1-4，因为在原始的代码中，当节点0为源节点调用dijkstra算法时，例如节点4，能够得到如下
-         * ZhangYu 2014-1-3, Node:4   face:dev[0]=net(0,0-1)  with distance:2，含义是到从节点0到节点4的距离是2，从节点0的出口faces是dev[0]=net(0,0-1)。
-         * 而我在多路径计算中，希望能得到的是从节点4到节点0的所有的faces，即使麻烦，那也至少是4-1的face，而不是0-1
-         * 如果有4-1，那么就可以通过追溯parent node而得到整条path
-         */
       //std::cout<< "ZhangYu ***********************************************************************************************************  " << *(b.get<0>()) <<  std::endl;
       return make_tuple (a.get<0> (), a.get<1> () + b.get<1> (), a.get<2> () + b.get<2> ());
       }
@@ -304,7 +315,6 @@ struct ZYWeightCombine :
   uint32_t
   operator () (uint32_t a, property_traits< EdgeWeights >::reference b) const
   {
-        //b.get<1>()=20;
     return a + b.get<1> ();
   }
 
@@ -312,14 +322,17 @@ struct ZYWeightCombine :
   operator () (tuple< ns3::Ptr<ns3::ndn::Face>, uint32_t, double > a,
                property_traits< EdgeWeights >::reference b) const
   {
-        /*b已经是<face,uint,double>的元组了，这里只是告诉使用这样的距离计算方法。b的产生实在本文件下面的的get(weightmap,edge)的定义中
-         * get(weightmap,edge）是在dijkstra_shortest_path中调用了 relax， relax中有 const W& w_e = get(w, e);所以除非修改get(w,e)
-         * 否则任何在dijkstra外部的对b的修改是无效的。
-         * 2013-5-15
-         */
-        //if(b.get<1>()==10)
-        //  b.get<2>()=3.0; //ZhangYu 2013-5-13
-
+	/*b已经是<face,uint,double>的元组了，这里只是告诉使用这样的距离计算方法。b的产生实在本文件下面的的get(weightmap,edge)的定义中
+	 * get(weightmap,edge）是在dijkstra_shortest_path中调用了 relax， relax中有 const W& w_e = get(w, e);所以除非修改get(w,e)
+	 * 否则任何在dijkstra外部的对b的修改是无效的。
+	 * 2013-5-15
+	 */
+	/*
+	* ZhangYu 2014-3-23 因为multipath产生了错误，所以要理解compare和combine到底干了什么
+	* a<1>是当前节点的标号，b<1>是当前边的代价，那么返回的应该是新的节点的代价
+	*/
+	//std::cout << "ZhangYu 2014-3-21 a<1>" << a.get<1>() << "   b<1>" << b.get<1>() << "   a<2> "<< a.get<2>() << "  b<2>" << b.get<2>() << std::endl;
+	//std::cout << "ZhangYu 2014-3-212： a<1>+b<1>: " << a.get<1>() +b.get<1>() << std::endl;
     if (a.get<0> () == 0)
     {
       return make_tuple (b.get<0> (), a.get<1> () + b.get<1> (), a.get<2> () + b.get<2> ());

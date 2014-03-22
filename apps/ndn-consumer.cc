@@ -238,7 +238,7 @@ Consumer::SendPacket ()
   packet->AddHeader (interestHeader);
   NS_LOG_DEBUG ("Interest packet size: " << packet->GetSize ());
 
-  CalculateDynamicRouting(nameWithSequence);
+  //CalculateDynamicRouting(nameWithSequence);
 
   WillSendOutInterest (seq);  
 

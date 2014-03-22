@@ -132,7 +132,10 @@ protected:
 
   Time m_period;
   EventId m_printEvent;
-  
+  /*mutable的含义在c++ primer中有，编译器在优化时，发现对一个变量要短时间内访问两次，而且在这两次之间没有代码对其修改，那么可能会把这个
+   * 变量放在寄存器中为了访问快，但是如果这个变量是比如系统时间或其他硬件地址等不是由代码改变的变量，那么就会出错，因此有volatile声明字，和const对应
+   * 而mutable是在const结构或者类中，定义和volatile一样的变量
+   */
   mutable std::map<Ptr<const Face>, boost::tuple<Stats, Stats> > m_stats;
 };
 

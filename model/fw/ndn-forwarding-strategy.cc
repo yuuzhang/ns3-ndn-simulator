@@ -425,14 +425,16 @@ ForwardingStrategy::SatisfyPendingInterest (Ptr<Face> inFace,
 
   //ZhangYu 2014-2-10 如果没有判断inFace!=0，那么执行inFace->GetObject<NetDeviceFace>会导致错误
   if(inFace!=0)
-  if(inFace->GetObject<NetDeviceFace>()!=0)
   {
-	  NS_LOG_DEBUG("ZhangYu 2014-2-5 Node: " << GetObject<Node>()->GetId() << " trying remove the fibEntry:  ================================" << *fibEntry<<"  " << inFace->GetObject<NetDeviceFace>());
-	  GetObject<Fib>()->Remove(&fibEntry->GetPrefix());
-  }
-  else
-  {
-	  NS_LOG_DEBUG("ZhangYu 2014-2-5 Node: " << GetObject<Node>()->GetId()  << " avoid remove the fibEntry:  ========================================================" << *fibEntry<<"  " << inFace->GetObject<NetDeviceFace>());
+	  if(inFace->GetObject<NetDeviceFace>()!=0)
+	  {
+		  NS_LOG_DEBUG("ZhangYu 2014-2-5 Node: " << GetObject<Node>()->GetId() << " trying remove the fibEntry:  ================================" << *fibEntry<<"  " << inFace->GetObject<NetDeviceFace>());
+		  //GetObject<Fib>()->Remove(&fibEntry->GetPrefix());
+	  }
+	  else
+	  {
+		  NS_LOG_DEBUG("ZhangYu 2014-2-5 Node: " << GetObject<Node>()->GetId()  << " avoid remove the fibEntry:  ========================================================" << *fibEntry<<"  " << inFace->GetObject<NetDeviceFace>());
+	  }
   }
   NS_LOG_DEBUG("ZhangYu 2014-2-4  m_fib " << GetObject<Fib>()->GetSize() <<"  " << fibEntry->GetPrefix());
 

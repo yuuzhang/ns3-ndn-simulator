@@ -339,10 +339,9 @@ void
             NS_ASSERT (fib != 0);
             if (action=="Backup&Initial")
             {
-                NS_LOG_DEBUG("ZhangYu ==================================================================================================");
-
-              fib->InvalidateAll ();  //2014-1-8，这一句最终调用的是fib-entry.cc中的，把一个节点的所有端口都设置为如：dev[2]=net(1,2-5)(65535,r,1) 后面的65535，r（表示RED）
-              //因为没有只在Backup中执行，在每个节点进行多路径计算时，要恢复一下 metric，如果也运行上面InvaliateAll，会导致前面节点计算后添加的fib entry变为 65535,r。从而出错
+			//NS_LOG_DEBUG("ZhangYu ==================================================================================================");
+			fib->InvalidateAll ();  //2014-1-8，这一句最终调用的是fib-entry.cc中的，把一个节点的所有端口都设置为如：dev[2]=net(1,2-5)(65535,r,1) 后面的65535，r（表示RED）
+			//因为没有只在Backup中执行，在每个节点进行多路径计算时，要恢复一下 metric，如果也运行上面InvaliateAll，会导致前面节点计算后添加的fib entry变为 65535,r。从而出错
             }
             Ptr<L3Protocol> l3 = source->GetObject<L3Protocol> ();
             NS_ASSERT (l3 != 0);
@@ -459,7 +458,7 @@ void
 void
     GlobalRoutingHelper::CalculateNoCommLinkMultiPathRoutes()
     {
-        uint32_t  multipathNumber=1;    //共计算几条多路径
+        uint32_t  multipathNumber=3;    //共计算几条多路径
         
         BOOST_CONCEPT_ASSERT(( VertexListGraphConcept< NdnGlobalRouterGraph > ));
         BOOST_CONCEPT_ASSERT((IncidenceGraphConcept<NdnGlobalRouterGraph>));
@@ -496,7 +495,6 @@ void
                     {
                         DistancesMap    distances;
                         PredecessorsMap predecessors;
-                        
                         dijkstra_shortest_paths (graph, source,
                                                  predecessor_map (boost::ref(predecessors))
                                                  .
@@ -513,9 +511,8 @@ void
                         NS_LOG_DEBUG("ZhangYu 2014-2-7 pathIndex: " << pathIndex << endl);
                         for(PredecessorsMap::iterator i=predecessors.begin();i!=predecessors.end();i++)
                         {
-                            NS_LOG_DEBUG("ZhangYu 2013-5-21 predecessors node: " << i->first->GetObject<Node>()->GetId()  <<"  ParentNode: " <<i->second->GetObject<Node>()->GetId());
+                            //NS_LOG_DEBUG("ZhangYu 2013-5-21 predecessors node: " << i->first->GetObject<Node>()->GetId()  <<"  ParentNode: " <<i->second->GetObject<Node>()->GetId());
                         }
-
 
                         for (DistancesMap::iterator i = distances.begin (); i != distances.end (); i++)
                         {
@@ -532,6 +529,8 @@ void
                                     NS_LOG_DEBUG("ZhangYu 2014-1-3, Node:" << i->first->GetObject<Node>()->GetId()<< "   face:" << *i->second.get<0>()<<"  with distance:" <<i->second.get<1>());
                                     
                                     //下面的语句使得为每个producer的节点的每个应用添加路由fibs，为0就不循环，一个节点有多个Apps时循环（这里循环执行有点冗余，因为步骤一样，只是prefix不同，但是为了代码清爽，就这样了）
+                                    NS_LOG_DEBUG("ZhangYu 2014-2-7 i->first->GetLocalPrefixes.size(): " <<i->first->GetLocalPrefixes().size());
+
                                     BOOST_FOREACH (const Ptr<const Name> &prefix, i->first->GetLocalPrefixes ())
                                     {
                                         Ptr<GlobalRouter> curNode =i->first ;
@@ -561,6 +560,9 @@ void
                                             //const Ptr<const Name> temp=Create<Name> (boost::lexical_cast<string>(*prefix));
                                             NS_LOG_DEBUG("ZhangYu 2014-1-8 temp: " << *temp);
 
+                                            NS_LOG_DEBUG("ZhangYu 2014-3-19 distances[curNode].get<0>: " << *distances[curNode].get<0>());
+                                            NS_LOG_DEBUG("ZhangYu 2014-3-19 i->second.get<1>(): " << i->second.get<1>());
+                                            NS_LOG_DEBUG("ZhangYu 2014-3-19 distances[preNode].get<1>(): " << distances[preNode].get<1>());
                                             //Ptr<fib::Entry> entry = fib->Add (temp, distances[curNode].get<0> (),  i->second.get<1>()-distances[preNode].get<1> ());
                                             Ptr<fib::Entry> entry = fib->Add (prefix, distances[curNode].get<0> (),  i->second.get<1>()-distances[preNode].get<1> ());
                                             NS_LOG_DEBUG("ZhangYu 2014-1-8 *entry: " << *entry);
@@ -580,22 +582,19 @@ void
                                             //前面执行完了回溯路径，添加fib，后面的是把这条路径上的Link设置为不可用
                                             //更改边的代价时，可以参考CaculateAllPossibleRoutes中的l3->GetFace (faceId),这里更简单的是使用distances[curNode].get<0>()，一样的类型
                                             //NS_LOG_DEBUG("ZhangYu 2014-1-9 distances[curNode].get<0>()->GetInstanceTypeId()=====" << distances[curNode].get<0>()->GetInstanceTypeId());
-                                            distances[curNode].get<0>()->SetMetric(std::numeric_limits<int16_t>::max ()-1); // value std::numeric_limits<int16_t>::max () MUST NOT be used (reserved)
-                                            
+                                            distances[curNode].get<0>()->SetMetric(std::numeric_limits<uint16_t>::max ()); // value std::numeric_limits<int16_t>::max () MUST NOT be used (reserved)
+                                            //distances[curNode].get<0>()->SetMetric(2000); // value std::numeric_limits<int16_t>::max () MUST NOT be used (reserved)
+
                                             NS_LOG_DEBUG("ZhangYu 2014-2-9 *entry: " << *entry);
                                             
                                             curNode=preNode;
                                         }
-
+                                        std::cout << "ZhangYu 2014-3-15  predecessors: " << preNode->GetId() << "   source: " << source->GetId() << std::endl;
                                     }
-                                    //for (uint32_t faceId = 0; faceId < l3->GetNFaces (); faceId++)
-                                    {
-                                        //NS_LOG_DEBUG("ZhangYu 2014-1-3 =============================" << *(l3->GetFace (faceId))<< "   metric: " << l3->GetFace (faceId)->GetMetric());
-                                    }
-
                                 }
                             }
                         }
+                        
                     }
 
                     //恢复originalMetric

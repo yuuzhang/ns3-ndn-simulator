@@ -29,6 +29,14 @@ def build(bld):
 
         obj = bld.create_ns3_program('ndn-congestion-topo-plugin', ['ndnSIM'])
         obj.source = 'ndn-congestion-topo-plugin.cc'
+				
+	#ZhangYu 2014-2-23 add my new file
+	obj = bld.create_ns3_program('ndn-xiezhenyong', ['ndnSIM'])
+        obj.source = 'ndn-xiezhenyong.cc'
+
+	#ZhangYu 2014-3-7 add my new file
+	obj = bld.create_ns3_program('ndn-zhangyu-multipath', ['ndnSIM'])
+        obj.source = 'ndn-zhangyu-multipath.cc'
 
         obj = bld.create_ns3_program('ndn-congestion-alt-topo-plugin', ['ndnSIM'])
         obj.source = [
