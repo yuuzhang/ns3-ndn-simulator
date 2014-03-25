@@ -50,7 +50,8 @@ class NdnGlobalRouterGraph
 {
 public:
   typedef ns3::Ptr< ns3::ndn::GlobalRouter > Vertice;
-  typedef uint16_t edge_property_type;
+  //typedef uint16_t edge_property_type;
+  typedef uint32_t edge_property_type;
   typedef uint32_t vertex_property_type;
   
   NdnGlobalRouterGraph ()
@@ -214,8 +215,10 @@ template<>
 struct property_traits< EdgeWeights >
 {
   // Metric property map
-  typedef tuple< ns3::Ptr<ns3::ndn::Face>, uint16_t, double > value_type;
-  typedef tuple< ns3::Ptr<ns3::ndn::Face>, uint16_t, double > reference;
+  //typedef tuple< ns3::Ptr<ns3::ndn::Face>, uint16_t, double > value_type;
+  //typedef tuple< ns3::Ptr<ns3::ndn::Face>, uint16_t, double > reference;
+  typedef tuple< ns3::Ptr<ns3::ndn::Face>, uint32_t, double > value_type;
+  typedef tuple< ns3::Ptr<ns3::ndn::Face>, uint32_t, double > reference;
   typedef ns3::ndn::GlobalRouter::Incidency key_type;
   typedef readable_property_map_tag category;
 };

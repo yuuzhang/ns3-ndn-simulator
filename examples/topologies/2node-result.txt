@@ -2,13 +2,12 @@
 
 router
 
-# node	comment	yPos	xPos	systemID	NA	98	16	0	
-Node0	NA	1	1	0	
-Node1	NA	3	3	1	
-Node2	NA	5	6	2	
+# node	comment	yPos	xPos	systemID
+Node1	NA	50	125	1	
+Node2	NA	147	116	2	
 
 link
 
 #srcNode dstNode bandwidth metric	delay	queue	
-Node0	Node1	10Mbps	11	0.399s	80
-Node1	Node2	10Mbps	20	0.4s	80			
+#Src2	Node1	10Mbps	11	0.399s	80			
+Node1	Node2	10Mbps	9	0.1097s	200	

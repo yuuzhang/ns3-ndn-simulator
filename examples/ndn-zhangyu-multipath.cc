@@ -64,16 +64,16 @@ main (int argc, char *argv[])
   cmd.Parse (argc, argv);
 
   AnnotatedTopologyReader topologyReader ("", 25);
-  int nodesNumber=2;
-  topologyReader.SetFileName ("src/ndnSIM/examples/topologies/2node-result.txt");
+  int nodesNumber=26;
+  topologyReader.SetFileName ("src/ndnSIM/examples/topologies/26node-result.txt");
   //topologyReader.SetFileName ("src/ndnSIM/examples/topologies/topo-6-node.txt");
   topologyReader.Read ();
 
 
   // Install NDN stack on all nodes
   ndn::StackHelper ndnHelper;
-  //ndnHelper.SetForwardingStrategy ("ns3::ndn::fw::Flooding");
-  ndnHelper.SetForwardingStrategy ("ns3::ndn::fw::BestRoute");
+  ndnHelper.SetForwardingStrategy ("ns3::ndn::fw::Flooding");
+  //ndnHelper.SetForwardingStrategy ("ns3::ndn::fw::BestRoute");
   ndnHelper.SetContentStore ("ns3::ndn::cs::Lru",
                               "MaxSize", "1");
   ndnHelper.InstallAll ();
@@ -97,12 +97,13 @@ main (int argc, char *argv[])
 	  // that will express interests in /dst1 namespace
 	  consumerHelper.SetPrefix ("/Node"+boost::lexical_cast<std::string>(i));
 	  consumerHelper.Install (consumer1);
-	  //std::cout <<"ZhangYu 2014-3-7 consumer1->GetId(): " <<consumer1->GetId() << std::endl;
+	  std::cout <<"ZhangYu 2014-3-7 consumer1->GetId(): " <<consumer1->GetId() << std::endl;
   }
 
   ndn::AppHelper producerHelper ("ns3::ndn::Producer");
   producerHelper.SetAttribute ("PayloadSize", StringValue("1024"));
 
+  //for(int i=nodesNumber/2+1;i<nodesNumber;i++)
   for(int i=nodesNumber/2;i<nodesNumber;i++)
   {
 	  producerHelper.SetPrefix ("/Node"+boost::lexical_cast<std::string>(i-nodesNumber/2));
@@ -110,15 +111,16 @@ main (int argc, char *argv[])
 	  // install producer that will satisfy Interests in /dst1 namespace
 	  ndnGlobalRoutingHelper.AddOrigins ("/Node"+boost::lexical_cast<std::string>(i-nodesNumber/2), producer1);
 	  producerHelper.Install (producer1);
-	  //std::cout <<"ZhangYu 2014-3-7 producer1->GetId(): " <<producer1->GetId() << std::endl;
+	  std::cout <<"ZhangYu 2014-3-7 producer1->GetId(): " <<producer1->GetId() << std::endl;
   }
 
   // Calculate and install FIBs
   //ndn::GlobalRoutingHelper::CalculateRoutes ();
+  //ndn::GlobalRoutingHelper::CalculateAllPossibleRoutes();
   ndn::GlobalRoutingHelper::CalculateNoCommLinkMultiPathRoutes();
 
 
-  Simulator::Stop (Seconds (1.0));
+  Simulator::Stop (Seconds (100.0));
 
   //ZhangYu Add the trace
 
@@ -129,7 +131,7 @@ main (int argc, char *argv[])
   aggTracers = ndn::L3AggregateTracer::InstallAll ("aggregate-trace.txt", Seconds (0.5));
 
   boost::tuple< boost::shared_ptr<std::ostream>, std::list<Ptr<ndn::L3RateTracer> > >
-    rateTracers = ndn::L3RateTracer::InstallAll ("rate-trace.txt", Seconds (10));
+    rateTracers = ndn::L3RateTracer::InstallAll ("rate-trace.txt", Seconds (1));
 
   boost::tuple< boost::shared_ptr<std::ostream>, std::list<Ptr<ndn::AppDelayTracer> > >
     tracers = ndn::AppDelayTracer::InstallAll ("app-delays-trace.txt");

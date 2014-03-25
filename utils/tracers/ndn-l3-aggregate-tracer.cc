@@ -179,8 +179,8 @@ L3AggregateTracer::OutInterests  (std::string context,
   m_stats[face].get<0> ().m_outInterests ++;
   m_stats[face].get<1> ().m_outInterests += header->GetSerializedSize ();
   //std::cout << "ZhangYu 2014-3-13 =============================== header->GetSerializedSize:   " << header->GetSerializedSize() << std::endl;
-  m_stats[face].get<0> ().m_outInterests=10000;
-  m_stats[face].get<1> ().m_outInterests=10000;
+  //m_stats[face].get<0> ().m_outInterests=10000;
+  //m_stats[face].get<1> ().m_outInterests=10000;
 }
 
 void

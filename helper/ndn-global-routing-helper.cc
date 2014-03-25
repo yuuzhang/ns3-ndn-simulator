@@ -556,37 +556,36 @@ void
                                                 std::cout << "ZhangYu 2014-1-8 我认为不应该出现这种情况，出现了是有逻辑错误" << std::endl << std::endl;
                                               continue;
                                               }
-                                        	Ptr<Name> temp=Create<Name> (boost::lexical_cast<string>(*prefix)+"/"+boost::lexical_cast<string>(pathIndex));
+                                        	//Ptr<Name> temp=Create<Name> (boost::lexical_cast<string>(*prefix)+"/"+boost::lexical_cast<string>(pathIndex));
                                             //const Ptr<const Name> temp=Create<Name> (boost::lexical_cast<string>(*prefix));
-                                            NS_LOG_DEBUG("ZhangYu 2014-1-8 temp: " << *temp);
-
-                                            NS_LOG_DEBUG("ZhangYu 2014-3-19 distances[curNode].get<0>: " << *distances[curNode].get<0>());
-                                            NS_LOG_DEBUG("ZhangYu 2014-3-19 i->second.get<1>(): " << i->second.get<1>());
-                                            NS_LOG_DEBUG("ZhangYu 2014-3-19 distances[preNode].get<1>(): " << distances[preNode].get<1>());
+                                            //NS_LOG_DEBUG("ZhangYu 2014-1-8 temp: " << *temp);
                                             //Ptr<fib::Entry> entry = fib->Add (temp, distances[curNode].get<0> (),  i->second.get<1>()-distances[preNode].get<1> ());
-                                            Ptr<fib::Entry> entry = fib->Add (prefix, distances[curNode].get<0> (),  i->second.get<1>()-distances[preNode].get<1> ());
-                                            NS_LOG_DEBUG("ZhangYu 2014-1-8 *entry: " << *entry);
-
-                                            entry->SetRealDelayToProducer (distances[curNode].get<0> (), Seconds (i->second.get<2>()-distances[preNode].get<2>()));
-
-                                            Ptr<Limits> faceLimits = distances[curNode].get<0> ()->GetObject<Limits> ();
-                                            Ptr<Limits> fibLimits = entry->GetObject<Limits> ();
-                                            if (fibLimits != 0)
+                                            //NS_LOG_DEBUG("ZhangYu 2014-3-22 distances[curNode] : " << i->second.get<1>() << "   distances[preNode].get<1>(): " << distances[preNode].get<1>());
+                                            if(i->second.get<1>()-distances[preNode].get<1> ()<std::numeric_limits<uint16_t>::max())
                                             {
-                                                // if it was created by the forwarding strategy via DidAddFibEntry event
-                                                fibLimits->SetLimits (faceLimits->GetMaxRate (), 2 *  (i->second.get<2>()-distances[preNode].get<2>())/*exact RTT*/);
-                                                NS_LOG_DEBUG ("Set limit for prefix " << *prefix << " " << faceLimits->GetMaxRate () << " / " <<
-                                                              2* (i->second.get<2>()-distances[preNode].get<2>()) << "s (" << faceLimits->GetMaxRate () * 2 *  (i->second.get<2>()-distances[preNode].get<2>())<< ")");
+                                            	Ptr<fib::Entry> entry = fib->Add (prefix, distances[curNode].get<0> (),  i->second.get<1>()-distances[preNode].get<1> ());
+                                                entry->SetRealDelayToProducer (distances[curNode].get<0> (), Seconds (i->second.get<2>()-distances[preNode].get<2>()));
+
+                                                Ptr<Limits> faceLimits = distances[curNode].get<0> ()->GetObject<Limits> ();
+                                                Ptr<Limits> fibLimits = entry->GetObject<Limits> ();
+                                                if (fibLimits != 0)
+                                                {
+                                                    // if it was created by the forwarding strategy via DidAddFibEntry event
+                                                    fibLimits->SetLimits (faceLimits->GetMaxRate (), 2 *  (i->second.get<2>()-distances[preNode].get<2>())/*exact RTT*/);
+                                                    NS_LOG_DEBUG ("Set limit for prefix " << *prefix << " " << faceLimits->GetMaxRate () << " / " <<
+                                                                  2* (i->second.get<2>()-distances[preNode].get<2>()) << "s (" << faceLimits->GetMaxRate () * 2 *  (i->second.get<2>()-distances[preNode].get<2>())<< ")");
+                                                }
+                                                NS_LOG_DEBUG("ZhangYu 2014-2-9 *entry: " << *entry);
                                             }
-                                            
+                                            else
+                                            	NS_LOG_DEBUG("ZhangYu 2014-3-22 didnot add fib, because greater than uint16::max");
+
                                             //前面执行完了回溯路径，添加fib，后面的是把这条路径上的Link设置为不可用
                                             //更改边的代价时，可以参考CaculateAllPossibleRoutes中的l3->GetFace (faceId),这里更简单的是使用distances[curNode].get<0>()，一样的类型
                                             //NS_LOG_DEBUG("ZhangYu 2014-1-9 distances[curNode].get<0>()->GetInstanceTypeId()=====" << distances[curNode].get<0>()->GetInstanceTypeId());
                                             distances[curNode].get<0>()->SetMetric(std::numeric_limits<uint16_t>::max ()); // value std::numeric_limits<int16_t>::max () MUST NOT be used (reserved)
                                             //distances[curNode].get<0>()->SetMetric(2000); // value std::numeric_limits<int16_t>::max () MUST NOT be used (reserved)
 
-                                            NS_LOG_DEBUG("ZhangYu 2014-2-9 *entry: " << *entry);
-                                            
                                             curNode=preNode;
                                         }
                                         std::cout << "ZhangYu 2014-3-15  predecessors: " << preNode->GetId() << "   source: " << source->GetId() << std::endl;
@@ -610,7 +609,7 @@ GlobalRoutingHelper::CalculateZYMultiPathRoutes ()
 {
     
     /**
-     * ZhangYu 2013-12-22, 在AllPossibleRoutes的基础上修改为自己的多路径算法。
+     * ZhangYu 2013-12-22, 在AllPossibleRoutes的基础上修改为自己的多路径算法。AllPossibleRoutes是每个节点都要计算所有的可能路径。ZYMultiPath是只计算源节点的所有可能，后面的计算一条
      * CalculateAllPossibleRoutes ()的过程是分别以每个节点为 source node，计算其他节点到source的距离，但是只有在碰到装有prefix的节点（也就是producer）时，才为source添加Fib，是到producer的出口。
      * 根据
      */
