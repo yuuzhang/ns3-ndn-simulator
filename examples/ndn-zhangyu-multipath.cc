@@ -63,9 +63,11 @@ main (int argc, char *argv[])
   CommandLine cmd;
   cmd.Parse (argc, argv);
 
-  AnnotatedTopologyReader topologyReader ("", 25);
-  int nodesNumber=26;
-  topologyReader.SetFileName ("src/ndnSIM/examples/topologies/26node-result.txt");
+  AnnotatedTopologyReader topologyReader ("", 50);
+  int nodesNumber=5;
+  topologyReader.SetFileName ("src/ndnSIM/examples/topologies/26node-result-1.txt");
+  //topologyReader.SetFileName ("src/ndnSIM/examples/topologies/topo-for-CompareMultiPath.txt");
+
   //topologyReader.SetFileName ("src/ndnSIM/examples/topologies/topo-6-node.txt");
   topologyReader.Read ();
 
@@ -74,6 +76,7 @@ main (int argc, char *argv[])
   ndn::StackHelper ndnHelper;
   ndnHelper.SetForwardingStrategy ("ns3::ndn::fw::Flooding");
   //ndnHelper.SetForwardingStrategy ("ns3::ndn::fw::BestRoute");
+  //ndnHelper.SetForwardingStrategy("ns3::ndn::fw::SmartFlooding");
   ndnHelper.SetContentStore ("ns3::ndn::cs::Lru",
                               "MaxSize", "1");
   ndnHelper.InstallAll ();
@@ -90,6 +93,7 @@ main (int argc, char *argv[])
   consumerHelper.SetAttribute ("Frequency", StringValue ("1000")); // 100 interests a second
 
   for(int i=0;i<nodesNumber/2;i++)
+  //for(int i=0;i<1;i++)
   {
 	  // Getting containers for the consumer/producer
 	  Ptr<Node> consumer1 = Names::Find<Node> ("Node"+boost::lexical_cast<std::string> (i));
@@ -103,14 +107,16 @@ main (int argc, char *argv[])
   ndn::AppHelper producerHelper ("ns3::ndn::Producer");
   producerHelper.SetAttribute ("PayloadSize", StringValue("1024"));
 
-  //for(int i=nodesNumber/2+1;i<nodesNumber;i++)
   for(int i=nodesNumber/2;i<nodesNumber;i++)
+  //for(int i=nodesNumber-1;i<nodesNumber;i++)
   {
-	  producerHelper.SetPrefix ("/Node"+boost::lexical_cast<std::string>(i-nodesNumber/2));
+	  //producerHelper.SetPrefix ("/Node"+boost::lexical_cast<std::string>(i-nodesNumber/2));
+	  producerHelper.SetPrefix ("/Node0");
 	  Ptr<Node> producer1 = Names::Find<Node> ("Node"+boost::lexical_cast<std::string> (i));
 	  // install producer that will satisfy Interests in /dst1 namespace
-	  ndnGlobalRoutingHelper.AddOrigins ("/Node"+boost::lexical_cast<std::string>(i-nodesNumber/2), producer1);
-	  producerHelper.Install (producer1);
+	  //ndnGlobalRoutingHelper.AddOrigins ("/Node"+boost::lexical_cast<std::string>(i-nodesNumber/2), producer1);
+	  ndnGlobalRoutingHelper.AddOrigins ("/Node0", producer1);
+	  producerHelper.Install(producer1);
 	  std::cout <<"ZhangYu 2014-3-7 producer1->GetId(): " <<producer1->GetId() << std::endl;
   }
 
@@ -120,7 +126,7 @@ main (int argc, char *argv[])
   ndn::GlobalRoutingHelper::CalculateNoCommLinkMultiPathRoutes();
 
 
-  Simulator::Stop (Seconds (100.0));
+  Simulator::Stop (Seconds (50.0));
 
   //ZhangYu Add the trace
 
@@ -128,7 +134,7 @@ main (int argc, char *argv[])
   csTracers = ndn::CsTracer::InstallAll ("cs-trace.txt", Seconds (1));
 
   boost::tuple< boost::shared_ptr<std::ostream>, std::list<Ptr<ndn::L3AggregateTracer> > >
-  aggTracers = ndn::L3AggregateTracer::InstallAll ("aggregate-trace.txt", Seconds (0.5));
+  aggTracers = ndn::L3AggregateTracer::InstallAll ("aggregate-trace.txt", Seconds (1));
 
   boost::tuple< boost::shared_ptr<std::ostream>, std::list<Ptr<ndn::L3RateTracer> > >
     rateTracers = ndn::L3RateTracer::InstallAll ("rate-trace.txt", Seconds (1));
@@ -137,7 +143,7 @@ main (int argc, char *argv[])
     tracers = ndn::AppDelayTracer::InstallAll ("app-delays-trace.txt");
 
   boost::tuple< boost::shared_ptr<std::ostream>, std::list<Ptr<L2RateTracer> > >
-   l2tracers = L2RateTracer::InstallAll ("drop-trace.txt", Seconds (0.5));
+   l2tracers = L2RateTracer::InstallAll ("drop-trace.txt", Seconds (1));
 
   Simulator::Run ();
   Simulator::Destroy ();

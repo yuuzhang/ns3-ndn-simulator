@@ -458,7 +458,7 @@ void
 void
     GlobalRoutingHelper::CalculateNoCommLinkMultiPathRoutes()
     {
-        uint32_t  multipathNumber=3;    //共计算几条多路径
+        uint32_t  multipathNumber=2;    //共计算几条多路径
         
         BOOST_CONCEPT_ASSERT(( VertexListGraphConcept< NdnGlobalRouterGraph > ));
         BOOST_CONCEPT_ASSERT((IncidenceGraphConcept<NdnGlobalRouterGraph>));
